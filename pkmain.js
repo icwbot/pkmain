@@ -12,6 +12,9 @@ const boterrorchannel = "420955154695585792";
 const botleavejoinchannel = "431829603741466634";
 const botrejectionschannel = "432090416834412545";
 const botowner = "264470521788366848";
+const wfortunes = ["{user} keep you`r shoes out of door", "hey {user} show your swag", "be carefull {user} is here! -_-", "{user} make the party awesome", "Hi {user} Take guitar & enjoy party", "hehe {user} are slide hide your dishes", "let's go {user} for chicken dinner"];
+const wimages = [`https://imgur.com/Z2fpFVi.png`, `https://imgur.com/G29egX4.png`, `https://imgur.com/LHdn5I8.png`, `https://imgur.com/GziAP26.png`, `https://imgur.com/GjI5Vpk.png`, `https://imgur.com/WqTnmM0.png`, `https://imgur.com/qknRCM7.png`];
+const icwstaff = ["385099687465844736", "278587244443467777", "288961251973791744"];
 const owmkey = process.env.KEY_WEATHER;
 const Cleverbot = require('cleverbot-node');
 const clbot = new Cleverbot();
@@ -51,21 +54,6 @@ bot.login(process.env.BOTTOKEN).then(function() {
     console.log("Main Bot logged in");
     bot.channels.get(botlogchannel).send("Main bot logged in");
 }).catch(console.log);
-
-
-fs.readFile("save.json", function(err, data) {
-    if (err) {
-        if (err.code === "ENOENT") {
-            console.log("save.json does not exist");
-            fs.writeFile("save.json", "{}", "utf8", function(err) {
-                if (err) throw err;
-                console.log("save.json created");
-            });
-        } else {
-            throw err;
-        }
-    }
-});
 
 bot.on("message", async(message) => {
     if (!message.content.startsWith(prefix)) {
