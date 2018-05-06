@@ -42,7 +42,7 @@ bot.on("ready", function() {
     bot.channels.get(botlogchannel).send("Main bot ready");
 });
 bot.on("disconnect", function() {
-    console.log("Bot disconnected");
+    console.log("Main Bot disconnected");
     bot.channels.get(botlogchannel).send("Main bot disconnected");
     process.exit(1);
 });
@@ -486,7 +486,6 @@ bot.on("message", async(message) => {
         message.channel.send({ embed: uptimeembed });
     }
     /*----------------------------------------------------------------------------------------------------------------------------------------------------------*/
-    const serverQueue = songQueue.get(message.guild.id);
 
     if (command === "purge" || command === "prune" || command === "delete" || command === "clear") {
         let args2 = args.join("").substring(command.length);
