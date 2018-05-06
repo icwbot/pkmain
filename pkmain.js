@@ -39,17 +39,17 @@ const db = firebase.database();
 
 bot.on("ready", function() {
     console.log("Main Bot ready");
-    bot.channels.get(botlogchannel).send("bot ready");
+    bot.channels.get(botlogchannel).send("Main bot ready");
 });
 bot.on("disconnect", function() {
     console.log("Bot disconnected");
-    bot.channels.get(botlogchannel).send("bot disconnected");
+    bot.channels.get(botlogchannel).send("Main bot disconnected");
     process.exit(1);
 });
 
 bot.login(process.env.BOTTOKEN).then(function() {
     console.log("Main Bot logged in");
-    bot.channels.get(botlogchannel).send("bot logged in");
+    bot.channels.get(botlogchannel).send("Main bot logged in");
 }).catch(console.log);
 
 
