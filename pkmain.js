@@ -54,7 +54,7 @@ bot.login(process.env.BOTTOKEN).then(function() {
     console.log("Main Bot logged in");
     bot.channels.get(botlogchannel).send("Main bot logged in");
 }).catch(console.log);
-/*
+
 bot.on("message", async(message) => {
     if (!message.content.startsWith(prefix)) {
         return undefined;
@@ -109,7 +109,7 @@ bot.on('message', message => {
         return;
     }
 });
-*/
+/*
 bot.on("message", async(message) => {
     const sstatus = (await db.ref(`bot/`).child('sstatus').once('value')).val();
     bot.user.setPresence({ status: `streaming`, game: { name: `${sstatus}`, type: `STREAMING`, url: `https://www.twitch.tv/pardeepsingh12365` } });
@@ -473,7 +473,7 @@ bot.on("message", async(message) => {
             .addField('Uptime', `${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds`);
         message.channel.send({ embed: uptimeembed });
     }
-    /*----------------------------------------------------------------------------------------------------------------------------------------------------------*/
+    //----------------------------------------------------------------------------------------------------------------------------------------------------------
 
     if (command === "purge" || command === "prune" || command === "delete" || command === "clear") {
         let args2 = args.join("").substring(command.length);
@@ -836,7 +836,7 @@ bot.on("message", async(message) => {
             .setTimestamp();
         message.channel.send({ embed: serverinfoembed });
     }
-});
+});*/
 const randomcolor = '0x' + Math.floor(Math.random() * 16777215).toString(16);
 
 bot.on("error", function(err) {
