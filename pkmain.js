@@ -109,7 +109,7 @@ bot.on('message', message => {
         return;
     }
 });
-/*
+
 bot.on("message", async(message) => {
     const sstatus = (await db.ref(`bot/`).child('sstatus').once('value')).val();
     bot.user.setPresence({ status: `streaming`, game: { name: `${sstatus}`, type: `STREAMING`, url: `https://www.twitch.tv/pardeepsingh12365` } });
@@ -746,7 +746,7 @@ bot.on("message", async(message) => {
             `)
         }
     }
-
+/*
     if (command === "warn") {
         let warnUser = message.mentions.members.first();
         if (!warnUser) return message.channel.send(`Specify a user to warn`);
@@ -835,8 +835,8 @@ bot.on("message", async(message) => {
             .setFooter("Bot Developed by: PK#1650 ", "https://cdn.discordapp.com/attachments/399064303170224131/405585474988802058/videotogif_2018.01.24_10.14.40.gif")
             .setTimestamp();
         message.channel.send({ embed: serverinfoembed });
-    }
-});*/
+    }*/
+});
 const randomcolor = '0x' + Math.floor(Math.random() * 16777215).toString(16);
 
 bot.on("error", function(err) {
