@@ -358,8 +358,13 @@ bot.on("message", async(message) => {
     }
 
     if (command === "say") {
+        let ch = message.mentions.channels.first()
         message.delete().catch(err => bot.channels.get(botrejectionschannel).send(`${message.author.username} from ${message.guild.name} using say command \n${err}`))
-        message.channel.send(args.join("").substring(3));
+        if (!ch) {
+            message.channel.send(args.join("").substring(3));
+        } else {
+            ch.send(args.join("").substring(command.length);
+        }
     }
 
     if (command === "bugreport" || command === "bug") {
