@@ -363,7 +363,7 @@ bot.on("message", async(message) => {
         if (!ch) {
             message.channel.send(args.join("").substring(3));
         } else {
-            ch.send(args.join("").substring(command.length));
+            ch.send(args.join("").substring(command.length + ch.length));
         }
     }
 
