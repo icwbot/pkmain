@@ -17,7 +17,7 @@ const wimages = [`https://imgur.com/Z2fpFVi.png`, `https://imgur.com/G29egX4.png
 const icwstaff = ["385099687465844736", "278587244443467777", "288961251973791744"];
 const owmkey = process.env.KEY_WEATHER;
 var cleverbot = require("cleverbot.io"),
-cbot = new cleverbot("nN2b553iWXYX32ad", "Z8YpblfMsmKNmvZlr23QPjJeEd8cWBRv");
+const cbot = new cleverbot("nN2b553iWXYX32ad", "Z8YpblfMsmKNmvZlr23QPjJeEd8cWBRv");
 var Heroku = require('heroku.node');
 var hbot = new Heroku({ email: 'pardeepsingh1236512365@gmail.com', api_key: 'Process.env.H_APIKEY' });
 const { inspect } = require("util");
@@ -98,7 +98,7 @@ bot.on('message', async(message) => {
     if (message.author.bot) return undefined;
     if (message.channel.type == "dm" || message.channel.type == "group") return undefined;
     if (message.content.startsWith(`<@${bot.user.id}>`) || message.content.startsWith(`icw`) || message.content.startsWith(`Icw`) || message.content.startsWith(`ICW`)) {
-        bot.ask(message.content, function (err, response) {
+        cbot.ask(message.content, function (err, response) {
         message.channel.send(response); // Will likely be: "Living in a lonely world"
      });
         return;
