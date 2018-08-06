@@ -94,7 +94,7 @@ bot.on("message", async(message) => {
     }
 });
 
-bot.on('message', message => {
+bot.on('message', async(message) => {
     if (message.author.bot) return undefined;
     if (message.channel.type == "dm" || message.channel.type == "group") return undefined;
     if (message.content.startsWith(`<@${bot.user.id}>`) || message.content.startsWith(`icw`) || message.content.startsWith(`Icw`) || message.content.startsWith(`ICW`)) {
