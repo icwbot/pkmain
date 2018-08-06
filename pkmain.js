@@ -16,8 +16,8 @@ const wfortunes = ["{user} keep you`r shoes out of door", "hey {user} show your 
 const wimages = [`https://imgur.com/Z2fpFVi.png`, `https://imgur.com/G29egX4.png`, `https://imgur.com/LHdn5I8.png`, `https://imgur.com/GziAP26.png`, `https://imgur.com/GjI5Vpk.png`, `https://imgur.com/WqTnmM0.png`, `https://imgur.com/qknRCM7.png`];
 const icwstaff = ["385099687465844736", "278587244443467777", "288961251973791744"];
 const owmkey = process.env.KEY_WEATHER;
-const Cleverbot = require('cleverbot-node');
-const clbot = new Cleverbot();
+var cleverbot = require("cleverbot.io"),
+cbot = new cleverbot("nN2b553iWXYX32ad", "Z8YpblfMsmKNmvZlr23QPjJeEd8cWBRv");
 var Heroku = require('heroku.node');
 var hbot = new Heroku({ email: 'pardeepsingh1236512365@gmail.com', api_key: 'Process.env.H_APIKEY' });
 const { inspect } = require("util");
@@ -98,14 +98,9 @@ bot.on('message', async(message) => {
     if (message.author.bot) return undefined;
     if (message.channel.type == "dm" || message.channel.type == "group") return undefined;
     if (message.content.startsWith(`<@${bot.user.id}>`) || message.content.startsWith(`icw`) || message.content.startsWith(`Icw`) || message.content.startsWith(`ICW`)) {
-        clbot.configure({ botapi: process.env.CLEVERBOT_KEY});
-        Cleverbot.prepare(() => {
-            clbot.write(message.content, function (response) {
-                message.channel.startTyping(); //setTimeout(() => {
-                message.channel.send(response.output);
-                message.channel.stopTyping(); //}, Math.random() * (1 - 3) + 1 * 600);
-            })
-        });
+        bot.ask(message.content, function (err, response) {
+        message.channel.send(response); // Will likely be: "Living in a lonely world"
+     });
         return;
     }
 });
