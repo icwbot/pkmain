@@ -100,9 +100,9 @@ bot.on('message', async(message) => {
     if (message.content.startsWith(`<@${bot.user.id}>`) || message.content.startsWith(`icw`) || message.content.startsWith(`Icw`) || message.content.startsWith(`ICW`)) {
         clbot.configure({ botapi: process.env.CLEVERBOT_KEY});
         Cleverbot.prepare(() => {
-            clbot.write(message.content, (response) => {
+            clbot.write(message.content, function (response) => {
                 message.channel.startTyping(); //setTimeout(() => {
-                message.channel.send(response.message);
+                message.channel.send(response.output);
                 message.channel.stopTyping(); //}, Math.random() * (1 - 3) + 1 * 600);
             })
         });
