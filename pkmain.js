@@ -98,6 +98,12 @@ bot.on('message', async(message) => {
     if (message.author.bot) return undefined;
     if (message.channel.type == "dm" || message.channel.type == "group") return undefined;
     if (message.content.startsWith(`<@${bot.user.id}>`) || message.content.startsWith(`icw`) || message.content.startsWith(`Icw`) || message.content.startsWith(`ICW`)) {
+        cbot.setNick("icw")
+        cbot.create(function (err, session) {
+            // session is your session name, it will either be as you set it previously, or cleverbot.io will generate one for you
+  
+            // Woo, you initialized cleverbot.io.  Insert further code here
+        });
         cbot.ask(message.content, function (err, response) {
         message.channel.send(response); // Will likely be: "Living in a lonely world"
      });
