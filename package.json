@@ -20,7 +20,7 @@
     "eslint": "^4.5.0"
   },
   "dependencies": {
-    "cleverbot-node":"0.3.11",
+    "cleverbot.io":"1.0.4",
     "discord.js": "^11.3.2",
     "dotenv": "^4.0.0",
     "googleapis": "^20.1.0",
