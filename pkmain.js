@@ -105,6 +105,8 @@ bot.on('message', async(message) => {
     if (message.content.startsWith(`<@${bot.user.id}>`) || message.content.startsWith(`icw`) || message.content.startsWith(`Icw`) || message.content.startsWith(`ICW`)) {
         cbot.ask(message.content).then(response => {
              message.channel.send(response); // Will likely be: "Living in a uwu World"
+        }).catch((e) => {
+            message.channel.send("error" + e);
         });
         return;
     }
