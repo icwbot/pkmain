@@ -17,8 +17,7 @@ const wimages = [`https://imgur.com/Z2fpFVi.png`, `https://imgur.com/G29egX4.png
 const icwstaff = ["385099687465844736", "278587244443467777", "288961251973791744"];
 const owmkey = process.env.KEY_WEATHER;
 var cleverbot = require("better-cleverbot-io"),
-cbot = new cleverbot("nN2b553iWXYX32ad", "Z8YpblfMsmKNmvZlr23QPjJeEd8cWBRv");
-cbot.setNick("icw")
+cbot = new cleverbot({user:"nN2b553iWXYX32ad", key:"Z8YpblfMsmKNmvZlr23QPjJeEd8cWBRv",nick:"icw"});
 cbot.create().then(() => {
     //You just initialized the module :)
 }).catch(err => {
