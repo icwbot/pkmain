@@ -16,12 +16,13 @@ const wfortunes = ["{user} keep you`r shoes out of door", "hey {user} show your 
 const wimages = [`https://imgur.com/Z2fpFVi.png`, `https://imgur.com/G29egX4.png`, `https://imgur.com/LHdn5I8.png`, `https://imgur.com/GziAP26.png`, `https://imgur.com/GjI5Vpk.png`, `https://imgur.com/WqTnmM0.png`, `https://imgur.com/qknRCM7.png`];
 const icwstaff = ["385099687465844736", "278587244443467777", "288961251973791744"];
 const owmkey = process.env.KEY_WEATHER;
-var cleverbot = require("cleverbot.io"),
+var cleverbot = require("better-cleverbot-io"),
 cbot = new cleverbot("nN2b553iWXYX32ad", "Z8YpblfMsmKNmvZlr23QPjJeEd8cWBRv");
 cbot.setNick("icw")
-cbot.create(function (err, session) {
-    // session is your session name, it will either be as you set it previously, or cleverbot.io will generate one for you
-    // Woo, you initialized cleverbot.io.  Insert further code here
+cbot.create().then(() => {
+    //You just initialized the module :)
+}).catch(err => {
+//if anything weird happend, you will find it here.
 });
 var Heroku = require('heroku.node');
 var hbot = new Heroku({ email: 'pardeepsingh1236512365@gmail.com', api_key: 'Process.env.H_APIKEY' });
