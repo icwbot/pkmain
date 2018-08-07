@@ -104,8 +104,8 @@ bot.on('message', async(message) => {
     if (message.channel.type == "dm" || message.channel.type == "group") return undefined;
     if (message.content.startsWith(`<@${bot.user.id}>`) || message.content.startsWith(`icw`) || message.content.startsWith(`Icw`) || message.content.startsWith(`ICW`)) {
         cbot.ask(message.content).then((response => {
-        message.channel.send(response); // Will likely be: "Living in a uwu World"
-});
+             message.channel.send(response); // Will likely be: "Living in a uwu World"
+        }));
         return;
     }
 });
