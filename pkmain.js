@@ -18,11 +18,11 @@ const icwstaff = ["385099687465844736", "278587244443467777", "28896125197379174
 const owmkey = process.env.KEY_WEATHER;
 const CleverDoge = require(`cleverdoge`)
 const cbot = new CleverDoge("demokey1")
-cbot.create().then(() => {
+//cbot.create().then(() => {
     //You just initialized the module :)
-}).catch(err => {
+//}).catch(err => {
 //if anything weird happend, you will find it here.
-});
+//});
 var Heroku = require('heroku.node');
 var hbot = new Heroku({ email: 'pardeepsingh1236512365@gmail.com', api_key: 'Process.env.H_APIKEY' });
 const { inspect } = require("util");
