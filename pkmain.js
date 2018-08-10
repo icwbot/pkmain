@@ -18,11 +18,6 @@ const icwstaff = ["385099687465844736", "278587244443467777", "28896125197379174
 const owmkey = process.env.KEY_WEATHER;
 const CleverDoge = require(`cleverdoge`)
 const cbot = new CleverDoge("demokey1")
-//cbot.create().then(() => {
-    //You just initialized the module :)
-//}).catch(err => {
-//if anything weird happend, you will find it here.
-//});
 var Heroku = require('heroku.node');
 var hbot = new Heroku({ email: 'pardeepsingh1236512365@gmail.com', api_key: 'Process.env.H_APIKEY' });
 const { inspect } = require("util");
@@ -103,9 +98,8 @@ bot.on('message', async(message) => {
     if (message.author.bot) return undefined;
     if (message.channel.type == "dm" || message.channel.type == "group") return undefined;
     if (message.content.startsWith(`<@${bot.user.id}>`) || message.content.startsWith(`icw`) || message.content.startsWith(`Icw`) || message.content.startsWith(`ICW`)) {
-        cbot.ask(message.content).then(response => {
-             message.channel.send(response); // Will likely be: "Living in a uwu World"
-        }).catch((e) => {
+        message.channel.send(cbot.ask(message.content)
+        ).catch((e) => {
             message.channel.send("-> " + e);
         });
         return;
