@@ -16,8 +16,8 @@ const wfortunes = ["{user} keep you`r shoes out of door", "hey {user} show your 
 const wimages = [`https://imgur.com/Z2fpFVi.png`, `https://imgur.com/G29egX4.png`, `https://imgur.com/LHdn5I8.png`, `https://imgur.com/GziAP26.png`, `https://imgur.com/GjI5Vpk.png`, `https://imgur.com/WqTnmM0.png`, `https://imgur.com/qknRCM7.png`];
 const icwstaff = ["385099687465844736", "278587244443467777", "288961251973791744"];
 const owmkey = process.env.KEY_WEATHER;
-var cleverbot = require("better-cleverbot-io"),
-cbot = new cleverbot({user:"nN2b553iWXYX32ad", key:"Z8YpblfMsmKNmvZlr23QPjJeEd8cWBRv",nick:"icw"});
+const CleverDoge = require(`cleverdoge`)
+const cbot = new CleverDoge("demokey1")
 cbot.create().then(() => {
     //You just initialized the module :)
 }).catch(err => {
@@ -106,7 +106,7 @@ bot.on('message', async(message) => {
         cbot.ask(message.content).then(response => {
              message.channel.send(response); // Will likely be: "Living in a uwu World"
         }).catch((e) => {
-            message.channel.send("error" + e);
+            message.channel.send("-> " + e);
         });
         return;
     }
