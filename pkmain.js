@@ -5,7 +5,7 @@ const google = require("googleapis");
 const youtube = google.youtube("v3"); //var config = JSON.parse(fs.readFileSync('./config.json', 'utf-8'));
 const bot = new Discord.Client();
 const prefix = "$";
-const botlogcnhhannel = "406504806954565644";
+const botlogchannel = "406504806954565644";
 const botmlogchannel = "409055298158985216";
 const botbuglogchannel = "418642505509240836";
 const boterrorchannel = "420955154695585792";
