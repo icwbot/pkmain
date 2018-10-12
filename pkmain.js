@@ -616,7 +616,15 @@ bot.on("message", async(message) => {
                 });
                 message.channel.send("welcome image is now disabled");
             }
-            else if (c === "use-customimage") {
+            if (wimageonoff === "off") {
+                firebase.database().ref('servers/' + message.guild.id).update({
+                    wimageonoff: "on"
+                }).catch(function(err) {
+                    message.channel.send(err + "\n\n\n");
+                });
+                message.channel.send("welcome image is now enabled");
+            }
+        } else if (c === "use-customimage") {
             if (message.author.id !== botowner && !message.member.hasPermission("MANAGE_GUILD")) return message.channel.send(`U don't have permission to do that`);
             if (wchannelid === null) return message.channel.send(`welcome channel not set please set the channel first with \`\`${prefix}welcome set-channel <#channel>\`\``);
             if (wcustomimageurl === null) return message.channel.send("i cant find any url for custom image");
@@ -635,14 +643,6 @@ bot.on("message", async(message) => {
                     message.channel.send(err + "\n\n\n");
                 });
                 message.channel.send("welcome custom image is now disabled");
-            }
-            if (wcustomimageonoff === "off") {
-                firebase.database().ref('servers/' + message.guild.id).update({
-                    wcustomimageonoff: "on"
-                }).catch(function(err) {
-                    message.channel.send(err + "\n\n\n");
-                });
-                message.channel.send("welcome custom image is now enabled");
             }
             if (wcustomimageonoff === "off") {
                 firebase.database().ref('servers/' + message.guild.id).update({
