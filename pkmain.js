@@ -648,6 +648,17 @@ bot.on("message", async(message) => {
                 });
                 message.channel.send("welcome userinfo is now enabled");
             }
+        } else if (c === "set-joinimage") {
+            if (message.author.id !== botowner && !message.member.hasPermission("MANAGE_GUILD")) return message.channel.send(`U don't have permission to do that`);
+            if (wchannelid === null) return message.channel.send(`welcome channel not set please set the channel first with \`\`${prefix}welcome set-channel <#channel>\`\``);
+            let arg2 = arg.substring(c.length)
+            if (!arg2) return message.channel.send(`please add a image url after command`)
+            firebase.database().ref('servers/' + message.guild.id).update({
+                wjoinimage: arg2
+            }).catch(function(err) {
+                message.channel.send(err + "\n\n\n");
+            });
+            message.channel.send(`welcome image set successfully \n${arg2}`)
         } else if (c === "set-joinmessage") {
             if (message.author.id !== botowner && !message.member.hasPermission("MANAGE_GUILD")) return message.channel.send(`U don't have permission to do that`);
             if (wchannelid === null) return message.channel.send(`welcome channel not set please set the channel first with \`\`${prefix}welcome set-channel <#channel>\`\``);
