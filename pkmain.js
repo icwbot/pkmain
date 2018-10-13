@@ -685,7 +685,7 @@ bot.on("message", async(message) => {
             let arg2 = arg.substring(c.length)
             if (!arg2) return message.channel.send(`please add a image url after command`)
             firebase.database().ref('servers/' + message.guild.id).update({
-                wcustomimageurl: arg2.replace(/\s/g,'');
+                wcustomimageurl: arg2.replace(/\s/g,'')
             }).catch(function(err) {
                 message.channel.send(err + "\n\n\n");
             });
