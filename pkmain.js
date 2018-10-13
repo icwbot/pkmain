@@ -683,11 +683,11 @@ bot.on("message", async(message) => {
             if (message.author.id !== botowner && !message.member.hasPermission("MANAGE_GUILD")) return message.channel.send(`U don't have permission to do that`);
             if (wchannelid === null) return message.channel.send(`welcome channel not set please set the channel first with \`\`${prefix}welcome set-channel <#channel>\`\``);
             let arg2 = arg.substring(c.length)
-            message.channel.send(arg2)
-            if (!arg2) return message.channel.send(`please add a image url after command`)
-            if (!arg2.startsWith("http")) return message.channel.send(`its not a image link`)
+            let arg3 = arg2.replace(/\s/g,'')
+            if (!arg3) return message.channel.send(`please add a image url after command`)
+            if (!arg3.startsWith("http")) return message.channel.send(`its not a image link`)
             firebase.database().ref('servers/' + message.guild.id).update({
-                wcustomimageurl: arg2.replace(/\s/g,'')
+                wcustomimageurl: arg3
             }).catch(function(err) {
                 message.channel.send(err + "\n\n\n");
             });
