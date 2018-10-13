@@ -684,6 +684,7 @@ bot.on("message", async(message) => {
             if (wchannelid === null) return message.channel.send(`welcome channel not set please set the channel first with \`\`${prefix}welcome set-channel <#channel>\`\``);
             let arg2 = arg.substring(c.length)
             if (!arg2) return message.channel.send(`please add a image url after command`)
+            if (!arg2.startsWith("http")) return message.channel.send(`its not a image link`)
             firebase.database().ref('servers/' + message.guild.id).update({
                 wcustomimageurl: arg2.replace(/\s/g,'')
             }).catch(function(err) {
