@@ -20,7 +20,7 @@
     "eslint": "^4.5.0"
   },
   "dependencies": {
-    "cleverdoge": "0.2.8",
+    "cleverdoge": "0.3.4",
     "discord.js": "^11.5.1",
     "dotenv": "^4.0.0",
     "googleapis": "^20.1.0",
