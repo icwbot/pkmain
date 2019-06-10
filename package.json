@@ -2,7 +2,7 @@
   "name": "picabot",
   "version": "1.0.0",
   "engines": {
-    "node": "10.3.0"
+    "node": "12.4.0"
   },
   "description": "A discord bot for didney worl who has an appetite for non-nutritive substances",
   "main": "picabot.js",
