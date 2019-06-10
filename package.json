@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "cleverdoge": "0.2.8",
-    "discord.js": "^11.4.2",
+    "discord.js": "^11.5.1",
     "dotenv": "^4.0.0",
     "googleapis": "^20.1.0",
     "node-opus": "^0.2.6",
