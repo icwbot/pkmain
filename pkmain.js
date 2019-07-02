@@ -762,8 +762,9 @@ bot.on("message", async(message) => {
                                         image2.resize(800, 240);
 
                                         mask.resize(640, 640);
-                                        image.resize(180, 180);
+  
                                         image.mask(mask, 0, 0);
+                                        image.resize(180, 180);
                                         image2.composite(image, 5, 5);
                                         image2.getBuffer(Jimp.MIME_PNG,
                                             (error, buffer) => { message.channel.send({ files: [{ name: 'welcome.png', attachment: buffer }] }); });
