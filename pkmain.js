@@ -760,8 +760,9 @@ bot.on("message", async(message) => {
                                     Jimp.loadFont(Jimp.FONT_SANS_32_WHITE).then(function(font) {
                                         image2.print(font, 102, 18, member.user.tag)
                                         image2.resize(800, 240);
-                                        image.resize(180, 180);
+
                                         mask.resize(640, 640);
+                                        image.resize(180, 180);
                                         image.mask(mask, 0, 0);
                                         image2.composite(image, 5, 5);
                                         image2.getBuffer(Jimp.MIME_PNG,
