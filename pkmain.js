@@ -885,6 +885,171 @@ bot.on("message", async(message) => {
         message.channel.send({ embed: serverinfoembed });
     }*/
 });
+
+bot.on('guildMemberAdd', async(member) => {
+    const wmstatus = (await db.ref(`servers/${member.guild.id}`).child('welcomeMstatus').once('value')).val();
+    const wtextonoff = (await db.ref(`servers/${member.guild.id}`).child('wtextonoff').once('value')).val();
+    const wimageonoff = (await db.ref(`servers/${member.guild.id}`).child('wimageonoff').once('value')).val();
+    const wuinfoonoff = (await db.ref(`servers/${member.guild.id}`).child('wuinfoonoff').once('value')).val();
+    const wcustomimageurl = (await db.ref(`servers/${member.guild.id}`).child('wcustomimageurl').once('value')).val();
+    const wcustomimageonoff = (await db.ref(`servers/${member.guild.id}`).child('wcustomimageonoff').once('value')).val();
+    const wm = (await db.ref(`servers/${member.guild.id}`).child('wmessage').once('value')).val();
+    const wc = (await db.ref(`servers/${member.guild.id}`).child('wchannelid').once('value')).val();
+    const fn = Math.floor(Math.random() * wfortunes.length);
+    const fact = `${wfortunes[fn]}`;
+    const fact2 = `${fact.replace('{user}', member.user.username)}`
+    const rn = Math.floor(Math.random() * wimages.length);
+    const images = `${wimages[rn]}`;
+    const ms = bot.guilds.filter((guild) => guild.ownerID === member.user.id).filter((guild) => guild.memberCount > 200).map((guild) => guild.name);
+    const mm = bot.guilds.filter((guild) => guild.ownerID === member.user.id).filter((guild) => guild.memberCount > 200).map((guild) => guild.memberCount)
+    let nemoji = bot.emojis.get("439708397294714881")
+    let time = member.joinedAt - member.user.createdAt;
+    let d = Math.floor(time / 86400000);
+    if (d === 0) {
+        days = "";
+    } else {
+        days = d + " days ";
+    }
+    let h = Math.floor(time / 3600000 % 24);
+    if (h === 0) {
+        hours = "";
+    } else {
+        hours = h + " hours ";
+    }
+    let minutes = Math.floor((time % 3600000) / 60000) + " minutes";
+    if (wmstatus === "on") {
+        if (wc === null) return;
+        if (wtextonoff === "on") {
+            if (wm === null) {
+                member.guild.channels.get(wc.toString()).send(`${member} welcome to ${member.guild.name} you are the ${member.guild.memberCount}${ord(member.guild.memberCount)} user`)
+            } else {
+                member.guild.channels.get(wc.toString()).send(wm.replace('{user}', member.toString()).replace('{members}', member.guild.memberCount));
+            }
+        }
+        if (wimageonoff === "on") {
+            if (wcustomimageonoff !== "on" || !wcustomimageurl) {
+                let u = `you are the ${member.guild.memberCount}${ord(member.guild.memberCount)} user`;
+                let s = member.guild.name;
+                let img = member.user.displayAvatarURL;
+                Jimp.read(`https://cloud.githubusercontent.com/assets/414918/11165709/051d10b0-8b0f-11e5-864a-20ef0bada8d6.png`).then(function(mask) {
+                    Jimp.read(img).then(function(image) {
+                        Jimp.read(images).then(function(image2) {
+                            Jimp.loadFont(Jimp.FONT_SANS_16_BLACK).then(function(font) {
+                                image2.print(font, 121, 57, s);
+                                image2.print(font, 103, 79, u);
+                                image2.print(font, 103, 57, "to");
+                                image2.print(font, 11, 101, fact2)
+                                image2.print(font, 103, 4, "Welcome");
+                                Jimp.loadFont(Jimp.FONT_SANS_16_WHITE).then(function(font) {
+                                    image2.print(font, 120, 56, s);
+                                    image2.print(font, 102, 56, "to")
+                                    image2.print(font, 10, 100, fact2)
+                                    image2.print(font, 102, 78, u);
+                                    image2.print(font, 102, 3, "Welcome");
+                                    Jimp.loadFont(Jimp.FONT_SANS_32_BLACK).then(function(font) {
+                                        image2.print(font, 104, 20, member.user.tag);
+                                        Jimp.loadFont(Jimp.FONT_SANS_32_WHITE).then(function(font) {
+                                            image2.print(font, 102, 18, member.user.tag)
+                                            image2.resize(1600, 480);
+                                            image.resize(360, 360);
+                                            mask.resize(360, 360);
+                                            image.mask(mask, 0, 0);
+                                            image2.composite(image, 5, 5);
+                                            image2.getBuffer(Jimp.MIME_PNG,
+                                            (error, buffer) => { member.guild.channels.get(wc.toString()).send({ files: [{ name: 'welcome.png', attachment: buffer }] }); });
+                                        });
+                                    });
+                                });
+                            });
+                        });
+                    })
+                });
+            } else { 
+                let u = `you are the ${member.guild.memberCount}${ord(member.guild.memberCount)} user`;
+                let s = member.guild.name;
+                let img = member.user.displayAvatarURL;
+                Jimp.read(`https://cloud.githubusercontent.com/assets/414918/11165709/051d10b0-8b0f-11e5-864a-20ef0bada8d6.png`).then(function(mask) {
+                    Jimp.read(img).then(function(image) {
+                        Jimp.read(wcustomimageurl).then(function(image2) {
+                            Jimp.loadFont(Jimp.FONT_SANS_16_BLACK).then(function(font) {
+                                image2.print(font, 121, 57, s);
+                                image2.print(font, 103, 79, u);
+                                image2.print(font, 103, 57, "to");
+                                image2.print(font, 11, 101, fact2)
+                                image2.print(font, 103, 4, "Welcome");
+                                Jimp.loadFont(Jimp.FONT_SANS_16_WHITE).then(function(font) {
+                                    image2.print(font, 120, 56, s);
+                                    image2.print(font, 102, 56, "to")
+                                    image2.print(font, 10, 100, fact2)
+                                    image2.print(font, 102, 78, u);
+                                    image2.print(font, 102, 3, "Welcome");
+                                    Jimp.loadFont(Jimp.FONT_SANS_32_BLACK).then(function(font) {
+                                        image2.print(font, 104, 20, member.user.tag);
+                                        Jimp.loadFont(Jimp.FONT_SANS_32_WHITE).then(function(font) {
+                                            image2.print(font, 102, 18, member.user.tag)
+                                            image2.resize(1600, 480);
+                                            image.resize(360, 360);
+                                            mask.resize(360, 360);
+                                            image.mask(mask, 0, 0);
+                                            image2.composite(image, 5, 5);
+                                            image2.getBuffer(Jimp.MIME_PNG,
+                                            (error, buffer) => { member.guild.channels.get(wc.toString()).send({ files: [{ name: 'welcome.png', attachment: buffer }] }); });
+                                        });
+                                    });
+                                });
+                            });
+                        });
+                    })
+                });
+            
+            }
+        }
+        if (wuinfoonoff === "on") {
+            if (mm == 0) {} else {
+                member.guild.channels.get(wc.toString()).send(`:crown: Owner of ${ms} server with ${mm} members`)
+            }
+            if (member.user.id === botowner) {
+                member.guild.channels.get(wc.toString()).send(`:military_medal: Owner of ICW BOT`)
+            }
+            if (icwstaff.includes(member.user.id)) {
+                member.guild.channels.get(wc.toString()).send(`:medal: Staff member of ICW`)
+            }
+            if (member.user.displayAvatarURL.slice(-4) === ".gif") {
+                member.guild.channels.get(wc.toString()).send(nemoji + " nitro user")
+            }
+            if (member.user.bot === true) {
+                if (time < 432000000) {
+                    member.guild.channels.get(wc.toString()).send(":no_entry_sign: bot created " + `${days} ${hours} ${minutes}` + " ago")
+                }
+            }
+        }
+    } else { return }
+})
+
+bot.on('guildMemberRemove', async(member) => {
+    const wc = (await db.ref(`servers/${member.guild.id}`).child('wchannelid').once('value')).val();
+    const wmstatus = (await db.ref(`servers/${member.guild.id}`).child('welcomeMstatus').once('value')).val();
+    const wleavetextonoff = (await db.ref(`servers/${member.guild.id}`).child('wleavetextonoff').once('value')).val();
+    const lm = (await db.ref(`servers/${member.guild.id}`).child('lmessage').once('value')).val();
+    if (wmstatus === "on") {
+        if (wc === null) return;
+        if (wleavetextonoff === "on") {
+            if (lm === null) {
+                member.guild.channels.get(wc.toString()).send(`${member.user.tag} is left the server now we are ${member.guild.memberCount} members`)
+            } else {
+                member.guild.channels.get(wc.toString()).send(lm.replace('{user}', member.user.tag.toString()).replace('{members}', member.guild.memberCount));
+            }
+        }
+    } else { return }
+});
+
+bot.on("guildCreate", guild => { bot.channels.get(botleavejoinchannel).send(`New server joined: ${guild.name} (id: ${guild.id}). This server has ${guild.memberCount} members! and owner is ${guild.owner.user.username} now im in ${bot.guilds.size} servers`); });
+
+bot.on('guildDelete', guild => {
+    bot.channels.get(botleavejoinchannel).send(`Removed from ${guild.name} (id: ${guild.id}). and it was owned by ${guild.owner.user.username} (owner id: ${guild.owner.id}) now im in ${bot.guilds.size} servers`);
+    firebase.database().ref('servers/' + guild.id).set({ guildname: guild.name, guilddeleted: true }).catch(function(err) { bot.channles.get(boterrorchannel).send(err + "\n\n\n"); });
+});
+
 const randomcolor = '0x' + Math.floor(Math.random() * 16777215).toString(16);
 
 bot.on("error", function(err) {
