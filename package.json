@@ -28,7 +28,7 @@
   },
 
   "scripts": {
-    "build": "next build"
+    "build": "pkmain/pkmain.js"
   },
 
   "dependencies": {
