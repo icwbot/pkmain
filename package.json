@@ -26,6 +26,11 @@
   "devDependencies": {
     "eslint": "^4.5.0"
   },
+
+  "scripts": {
+    "build": "next build"
+  }
+
   "dependencies": {
     "cleverdoge": "0.3.4",
     "discord.js": "^11.5.1",
