@@ -29,7 +29,7 @@
 
   "scripts": {
     "build": "next build"
-  }
+  },
 
   "dependencies": {
     "cleverdoge": "0.3.4",
