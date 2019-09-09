@@ -1,10 +1,11 @@
 const request = require('request');
 const Discord = require("discord.js");
+const ytdl = require("ytdl-core");
+const YouTube = require("simple-youtube-api");
 const fs = require("fs");
 const google = require("googleapis");
 const youtube = google.youtube("v3"); //var config = JSON.parse(fs.readFileSync('./config.json', 'utf-8'));
 const bot = new Discord.Client();
-const stt = require("stt");
 const prefix = "$";
 const botlogchannel = "406504806954565644";
 const botmlogchannel = "409055298158985216";
@@ -13,14 +14,18 @@ const boterrorchannel = "420955154695585792";
 const botleavejoinchannel = "431829603741466634";
 const botrejectionschannel = "432090416834412545";
 const botowner = "264470521788366848";
-const pkgif = "https://cdn.discordapp.com/attachments/399064303170224131/405585474988802058/videotogif_2018.01.24_10.14.40.gif";
-const icwpng = "https://media.discordapp.net/attachments/406099961730564107/407455733689483265/Untitled6.png?width=300&height=300";
 const wfortunes = ["{user} keep you`r shoes out of door", "hey {user} show your swag", "be carefull {user} is here! -_-", "{user} make the party awesome", "Hi {user} Take guitar & enjoy party", "hehe {user} are slide hide your dishes", "let's go {user} for chicken dinner"];
 const wimages = [`https://imgur.com/Z2fpFVi.png`, `https://imgur.com/G29egX4.png`, `https://imgur.com/LHdn5I8.png`, `https://imgur.com/GziAP26.png`, `https://imgur.com/GjI5Vpk.png`, `https://imgur.com/WqTnmM0.png`, `https://imgur.com/qknRCM7.png`];
 const icwstaff = ["385099687465844736", "278587244443467777", "288961251973791744"];
+var dispatcher;
+const songQueue = new Map();
+var currentSongIndex = 0;
+var previousSongIndex = 0;
+var shuffle = false;
+var autoremove = false;
 const owmkey = process.env.KEY_WEATHER;
-const CleverDoge = require(`cleverdoge`)
-const cbot = new CleverDoge("demokey1")
+const Cleverbot = require('cleverbot-node');
+const clbot = new Cleverbot();
 var Heroku = require('heroku.node');
 var hbot = new Heroku({ email: 'pardeepsingh1236512365@gmail.com', api_key: 'Process.env.H_APIKEY' });
 const { inspect } = require("util");
@@ -44,19 +49,34 @@ firebase.auth().signInWithEmailAndPassword(process.env.FB_EMAIL, process.env.FB_
 const db = firebase.database();
 
 bot.on("ready", function() {
-    console.log("Main Bot ready");
-    bot.channels.get(botlogchannel).send("Main bot ready");
+    console.log("Bot ready");
+    bot.channels.get(botlogchannel).send("bot ready");
 });
 bot.on("disconnect", function() {
-    console.log("Main Bot disconnected");
-    bot.channels.get(botlogchannel).send("Main bot disconnected");
+    console.log("Bot disconnected");
+    bot.channels.get(botlogchannel).send("bot disconnected");
     process.exit(1);
 });
 
 bot.login(process.env.BOTTOKEN).then(function() {
-    console.log("Main Bot logged in");
-    bot.channels.get(botlogchannel).send("Main bot logged in");
+    console.log("Bot logged in");
+    bot.channels.get(botlogchannel).send("bot logged in");
 }).catch(console.log);
+
+
+fs.readFile("save.json", function(err, data) {
+    if (err) {
+        if (err.code === "ENOENT") {
+            console.log("save.json does not exist");
+            fs.writeFile("save.json", "{}", "utf8", function(err) {
+                if (err) throw err;
+                console.log("save.json created");
+            });
+        } else {
+            throw err;
+        }
+    }
+});
 
 bot.on("message", async(message) => {
     if (!message.content.startsWith(prefix)) {
@@ -97,13 +117,17 @@ bot.on("message", async(message) => {
     }
 });
 
-bot.on('message', async(message) => {
+bot.on('message', message => {
     if (message.author.bot) return undefined;
     if (message.channel.type == "dm" || message.channel.type == "group") return undefined;
     if (message.content.startsWith(`<@${bot.user.id}>`) || message.content.startsWith(`icw`) || message.content.startsWith(`Icw`) || message.content.startsWith(`ICW`)) {
-        message.channel.send(cbot.ask(message.content)
-        ).catch((e) => {
-            message.channel.send("-> " + e);
+        clbot.configure({ botapi: process.env.CLEVERBOT_KEY });
+        Cleverbot.prepare(() => {
+            clbot.write(message.content, (response) => {
+                message.channel.startTyping(); //setTimeout(() => {
+                message.channel.send(response.message);
+                message.channel.stopTyping(); //}, Math.random() * (1 - 3) + 1 * 600);
+            })
         });
         return;
     }
@@ -357,13 +381,8 @@ bot.on("message", async(message) => {
     }
 
     if (command === "say") {
-        let ch = message.mentions.channels.first()
         message.delete().catch(err => bot.channels.get(botrejectionschannel).send(`${message.author.username} from ${message.guild.name} using say command \n${err}`))
-        if (!ch) {
-            message.channel.send(args.join("").substring(3));
-        } else {
-            ch.send(args.join("").replace(ch, "").substring(3));
-        }
+        message.channel.send(args.join("").substring(3));
     }
 
     if (command === "bugreport" || command === "bug") {
@@ -477,7 +496,8 @@ bot.on("message", async(message) => {
             .addField('Uptime', `${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds`);
         message.channel.send({ embed: uptimeembed });
     }
-    //----------------------------------------------------------------------------------------------------------------------------------------------------------
+    /*----------------------------------------------------------------------------------------------------------------------------------------------------------*/
+    const serverQueue = songQueue.get(message.guild.id);
 
     if (command === "purge" || command === "prune" || command === "delete" || command === "clear") {
         let args2 = args.join("").substring(command.length);
@@ -515,8 +535,6 @@ bot.on("message", async(message) => {
     const wleavetextonoff = (await db.ref(`servers/${message.guild.id}`).child('wleavetextonoff').once('value')).val();
     const wimageonoff = (await db.ref(`servers/${message.guild.id}`).child('wimageonoff').once('value')).val();
     const wuinfoonoff = (await db.ref(`servers/${message.guild.id}`).child('wuinfoonoff').once('value')).val();
-    const wcustomimageonoff = (await db.ref(`servers/${message.guild.id}`).child('wcustomimageonoff').once('value')).val();
-    const wcustomimageurl = (await db.ref(`servers/${message.guild.id}`).child('wcustomimageurl').once('value')).val();
     const welcomeMstatus = (await db.ref(`servers/${message.guild.id}`).child('welcomeMstatus').once('value')).val();
     const wm = (await db.ref(`servers/${message.guild.id}`).child('wmessage').once('value')).val();
     if (command === "welcome") {
@@ -528,7 +546,6 @@ bot.on("message", async(message) => {
             firebase.database().ref('servers/' + message.guild.id).update({
                 welcomeMstatus: "on",
                 wimageonoff: "on",
-                wcustomimageonoff: "off",
                 wtextonoff: "on",
                 wuinfoonoff: "on"
             }).catch(function(err) {
@@ -624,34 +641,6 @@ bot.on("message", async(message) => {
                 });
                 message.channel.send("welcome image is now enabled");
             }
-        } else if (c === "use-customimage") {
-            if (message.author.id !== botowner && !message.member.hasPermission("MANAGE_GUILD")) return message.channel.send(`U don't have permission to do that`);
-            if (wchannelid === null) return message.channel.send(`welcome channel not set please set the channel first with \`\`${prefix}welcome set-channel <#channel>\`\``);
-            if (wcustomimageurl === null) return message.channel.send("i cant find any url for custom image");
-            if (!wcustomimageonoff) {
-                firebase.database().ref('servers/' + message.guild.id).update({
-                    wcustomimageonoff: "on"
-                }).catch(function(err) {
-                    message.channel.send(err + "\n\n\n");
-                });
-                message.channel.send("welcome custom-image is now enabled");
-            }
-            if (wcustomimageonoff === "on") {
-                firebase.database().ref('servers/' + message.guild.id).update({
-                    wcustomimageonoff: "off"
-                }).catch(function(err) {
-                    message.channel.send(err + "\n\n\n");
-                });
-                message.channel.send("welcome custom image is now disabled");
-            }
-            if (wcustomimageonoff === "off") {
-                firebase.database().ref('servers/' + message.guild.id).update({
-                    wcustomimageonoff: "on"
-                }).catch(function(err) {
-                    message.channel.send(err + "\n\n\n");
-                });
-                message.channel.send("welcome custom image is now enabled");
-            }
         } else if (c === "use-userinfo") {
             if (message.author.id !== botowner && !message.member.hasPermission("MANAGE_GUILD")) return message.channel.send(`U don't have permission to do that`);
             if (wchannelid === null) return message.channel.send(`welcome channel not set please set the channel first with \`\`${prefix}welcome set-channel <#channel>\`\``)
@@ -679,19 +668,6 @@ bot.on("message", async(message) => {
                 });
                 message.channel.send("welcome userinfo is now enabled");
             }
-        } else if (c === "set-customimage") {
-            if (message.author.id !== botowner && !message.member.hasPermission("MANAGE_GUILD")) return message.channel.send(`U don't have permission to do that`);
-            if (wchannelid === null) return message.channel.send(`welcome channel not set please set the channel first with \`\`${prefix}welcome set-channel <#channel>\`\``);
-            let arg2 = arg.substring(c.length)
-            let arg3 = arg2.replace(/\s/g,'')
-            if (!arg3) return message.channel.send(`please add a image url after command`)
-            if (!arg3.startsWith("http")) return message.channel.send(`its not a image link`)
-            firebase.database().ref('servers/' + message.guild.id).update({
-                wcustomimageurl: arg3
-            }).catch(function(err) {
-                message.channel.send(err + "\n\n\n");
-            });
-            message.channel.send(`welcome image set successfully \n${arg2}`)
         } else if (c === "set-joinmessage") {
             if (message.author.id !== botowner && !message.member.hasPermission("MANAGE_GUILD")) return message.channel.send(`U don't have permission to do that`);
             if (wchannelid === null) return message.channel.send(`welcome channel not set please set the channel first with \`\`${prefix}welcome set-channel <#channel>\`\``);
@@ -794,7 +770,7 @@ bot.on("message", async(message) => {
             `)
         }
     }
-/*
+
     if (command === "warn") {
         let warnUser = message.mentions.members.first();
         if (!warnUser) return message.channel.send(`Specify a user to warn`);
@@ -883,9 +859,576 @@ bot.on("message", async(message) => {
             .setFooter("Bot Developed by: PK#1650 ", "https://cdn.discordapp.com/attachments/399064303170224131/405585474988802058/videotogif_2018.01.24_10.14.40.gif")
             .setTimestamp();
         message.channel.send({ embed: serverinfoembed });
-    }*/
+    }
+    /*------------------------------------------------------------------------------------------
+                                            MUSIC COMMANDS
+    -------------------------------------------------------------------------------------------*/
+
+    if (command === "play" || command === "p" || command === "yt") {
+        const youtube = new YouTube(process.env.GOOGLEAPIKEY);
+        const voiceChannel = message.member.voiceChannel;
+        let args0 = args.join("").substring(command.length);
+        let searchString = args0.slice();
+        const url = args0 ? args0.replace(/<(.+)>/g, '$1') : '';
+        if (!voiceChannel) return message.channel.send("You are not in a voice channel please join a channel and use this command again");
+        const permissions = voiceChannel.permissionsFor(message.client.user);
+        if (!permissions.has('CONNECT')) return message.channel.send("I do not have the permissions to join that voice channel pleae give me permissions to join");
+        if (!permissions.has("SPEAK")) return message.channel.send("I do not have the permissions to speak in that voice channel pleae give me permissions to join");
+        if (url.match(/^https?:\/\/(www.youtube.com|youtube.com)\/playlist(.*)$/)) {
+            const playlist = await youtube.getPlaylist(url);
+            const videos = await playlist.getVideos();
+            for (const video of Object.values(videos)) {
+                const video2 = await youtube.getVideoByID(video.id);
+                await addSong(message, video2, voiceChannel, true);
+            }
+            return message.channel.send(`✅ Playlist: **${playlist.title}** has been added to the queue!`);
+        } else {
+            try {
+                var video = await youtube.getVideo(url);
+            } catch (error) {
+                try {
+                    var videos = await youtube.searchVideos(searchString, 1);
+                    //et index = 0;
+                    /*message.channel.send(`
+      __**Song selection:**__
+      ${videos.map(video2 => `**${++index} -** ${video2.title}`).join('\n')}
+      Please provide a value to select one of the search results ranging from 1-10.
+                          `);
+              try {
+                var response = await message.channel.awaitMessages(message2 => message2.content > 0 && message2.content < 11, {
+                  maxMatches: 1,
+                  time: 10000,
+                  errors: ['time']
+                });
+              } catch (err) {
+                console.error(err);
+                return message.channel.send('No or invalid value entered, cancelling video selection.');
+              }*/
+                    const videoIndex = 1 /*parseInt(response.first().content);*/
+                    var video = await youtube.getVideoByID(videos[videoIndex - 1].id);
+                } catch (err) {
+                    bot.channels.get(boterrorchannel).send(`${message.author.tag} from ${message.guild.name} trying to use play command but i got a error ${err}`)
+                    return message.channel.send('🆘 I could not obtain any search results.');
+                }
+            }
+            return addSong(message, video, voiceChannel);
+        }
+    }
+
+    if (command === "resume") {
+        if (message.member.voiceChannel !== undefined) {
+            if (!message.guild.me.voiceChannel) {
+                message.channel.send("bot is not in voice channel and nothing to play", { reply: message });
+                return;
+            }
+            if (serverQueue && !serverQueue.playing) {
+                serverQueue.playing = true;
+                dispatcher.resume();
+                return message.channel.send('▶ Resumed the music for you!');
+            }
+            return message.channel.send('There is nothing playing.');
+        } else {
+            message.channel.send("You can't resume music if you're not in a voice channel :cry:", { reply: message });
+        }
+    }
+
+    if (command === "pause") {
+        if (message.member.voiceChannel !== undefined) {
+            if (!message.guild.me.voiceChannel) {
+                message.channel.send("bot is not in voice channel and nothing to play", { reply: message });
+                return;
+            }
+            if (serverQueue && serverQueue.playing) {
+                serverQueue.playing = false;
+                dispatcher.pause();
+                return message.channel.send('⏸ Paused the music for you!');
+            }
+            return message.channel.send('There is nothing playing.');
+        } else {
+            message.channel.send("You can't pause music if you're not in a voice channel :cry:", { reply: message });
+        }
+    }
+
+    if (command === "prev") {
+        if (message.member.voiceChannel !== undefined) {
+            if (!message.guild.me.voiceChannel) {
+                message.channel.send("bot is not in voice channel and nothing to play", { reply: message });
+                return;
+            }
+            if (serverQueue.songs.length > 0) {
+                previousSongIndex = currentSongIndex;
+                var amount = Number.parseInt(args[0]);
+                if (Number.isInteger(amount)) {
+                    currentSongIndex -= amount;
+                } else {
+                    currentSongIndex--;
+                }
+                if (currentSongIndex < 0) {
+                    currentSongIndex = 0;
+                }
+                dispatcher.end("prev");
+            } else {
+                message.channel.send("There are no more songs :sob:", { reply: message });
+            }
+        } else {
+            message.channel.send("You can't prev music if you're not in a voice channel :cry:", { reply: message });
+        }
+    }
+
+
+    if (command === "skip" || command === "next" || command === "s") {
+        if (message.member.voiceChannel !== undefined) {
+            if (!message.guild.me.voiceChannel) {
+                message.channel.send("bot is not in voice channel and nothing to play", { reply: message });
+                return;
+            }
+            if (serverQueue.songs.length > 0) {
+                previousSongIndex = currentSongIndex;
+                var amount = Number.parseInt(args[0]);
+                if (Number.isInteger(amount)) {
+                    currentSongIndex += amount;
+                } else {
+                    currentSongIndex++;
+                }
+                if (currentSongIndex > serverQueue.songs.length - 1) {
+                    currentSongIndex = serverQueue.songs.length - 1;
+                    serverQueue.songs = [];
+                    currentSongIndex = 0;
+                    message.member.voiceChannel.leave();
+                    var finishembed = new Discord.RichEmbed()
+                        .setColor(randomcolor)
+                        .setAuthor("Finished playing because no more song in the queue", "https://cdn.discordapp.com/attachments/398789265900830760/405592021579989003/videotogif_2018.01.24_10.46.57.gif")
+                        .setDescription("please add more song if you like 🎧")
+                        .setFooter("Developed by: PK#1650 ", "https://cdn.discordapp.com/attachments/399064303170224131/405585474988802058/videotogif_2018.01.24_10.14.40.gif")
+                        .setTimestamp();
+                    message.channel.send({ embed: finishembed });
+                }
+                dispatcher.end("next");
+            } else {
+                message.channel.send("There are no more songs :sob:", { reply: message });
+            }
+        } else {
+            message.channel.send("You can't hear my music if you're not in a voice channel :cry:", { reply: message });
+        }
+    }
+
+    if (command === "goto") {
+        if (message.member.voiceChannel !== undefined) {
+            if (!message.guild.me.voiceChannel) {
+                message.channel.send("bot is not in voice channel and nothing to play", { reply: message });
+                return;
+            }
+            if (serverQueue.songs.length > 0) {
+                let arg = args.join("").substring(command.length);
+                var index = Number.parseInt(arg);
+                if (Number.isInteger(index)) {
+                    previousSongIndex = currentSongIndex;
+                    currentSongIndex = index - 1;
+                    if (currentSongIndex < 0) {
+                        currentSongIndex = 0;
+                    } else if (currentSongIndex > serverQueue.length - 1) {
+                        currentSongIndex = serverQueue.length - 1;
+                    }
+                    dispatcher.end("goto");
+                } else {
+                    message.channel.send(`\`${arg}\` is an invalid index`, { reply: message });
+                }
+            } else {
+                message.channel.send("There are no more songs :sob:", { reply: message });
+            }
+        } else {
+            message.channel.send("You can't hear my music if you're not in a voice channel :cry:", { reply: message });
+        }
+    }
+
+    if (command === "random") {
+        if (message.member.voiceChannel !== undefined) {
+            if (!message.guild.me.voiceChannel) {
+                message.channel.send("bot is not in voice channel and nothing to play", { reply: message });
+                return;
+            }
+            if (serverQueue.songs.length > 0) {
+                currentSongIndex = Math.floor(Math.random() * serverQueue.songs.length);
+                dispatcher.end("random");
+            } else {
+                message.channel.send("There are no more songs :sob:", { reply: message });
+            }
+        } else {
+            message.channel.send("You can't hear my music if you're not in a voice channel :cry:", { reply: message });
+        }
+    }
+
+    if (command === "stop") {
+        if (message.member.voiceChannel !== undefined) {
+            if (!message.guild.me.voiceChannel) {
+                message.channel.send("bot is not in voice channel and nothing to play", { reply: message });
+                return;
+            }
+            if (serverQueue.songs.length === 0) {
+                message.member.voiceChannel.leave();
+                message.channel.send("There are no songs to clear and im leaving the voice", { reply: message });
+            } else {
+                dispatcher.end("stopping");
+                currentSongIndex = 0;
+                serverQueue.songs = [];
+                message.member.voiceChannel.leave();
+                var stopembed = new Discord.RichEmbed()
+                    .setColor(randomcolor)
+                    .setAuthor("Finished playing by stop command", "https://cdn.discordapp.com/attachments/398789265900830760/405592021579989003/videotogif_2018.01.24_10.46.57.gif")
+                    .setDescription("thanks for using see you soon bye bye 👋")
+                    .setFooter("Stoped by: " + message.author.username.toString(), message.author.displayAvatarURL)
+                    .setTimestamp();
+                message.channel.send({ embed: stopembed });
+            }
+        } else {
+            message.channel.send("You can't stop music if you're not in a voice channel :cry:", { reply: message });
+        }
+    }
+
+    if (command === "autoremove") {
+        if (message.member.voiceChannel !== undefined) {
+            if (autoremove) {
+                autoremove = false;
+                message.channel.send("Song autoremoval is now disabled", { reply: message });
+            } else {
+                autoremove = true;
+                message.channel.send("Song autoremoval is now enabled", { reply: message });
+            }
+        } else {
+            message.channel.send("You can't hear my music if you're not in a voice channel :cry:", { reply: message });
+        }
+    }
+
+    if (command === "song" || command === "np" || command === "nowplaying") {
+        if (!message.guild.me.voiceChannel) {
+            message.channel.send("bot is not in voice channel and nothing to play", { reply: message });
+            return;
+        }
+        if (serverQueue.songs.length > 0) {
+            var songembed = new Discord.RichEmbed()
+                .setColor(randomcolor)
+                .setAuthor(`The current song is \`${serverQueue.songs[currentSongIndex].title}\` 🎧`)
+                .setDescription("link here: " + `[click](${serverQueue.songs[currentSongIndex].url})`)
+                .setThumbnail(`${serverQueue.songs[currentSongIndex].thumbnail}`)
+                .setFooter(`Added by ${serverQueue.songs[currentSongIndex].user}`, serverQueue.songs[currentSongIndex].usravatar)
+                .setTimestamp();
+            message.channel.send({ embed: songembed });
+        } else {
+            message.channel.send("No song is in the queue", { reply: message });
+        }
+    }
+
+    if (command === "queue" || command === "q" || command === "playlist") {
+        if (!message.guild.me.voiceChannel) {
+            message.channel.send("bot is not in voice channel and nothing to play", { reply: message });
+            return;
+        }
+        if (serverQueue.songs.length > 0) {
+            var songList = "";
+            for (var i = 0; i < serverQueue.songs.length; i++) {
+                if (i === currentSongIndex) {
+                    songList += `__**\`${i + 1}. ${serverQueue.songs[i].title}\`**__\n`;
+                } else {
+                    songList += `\`${i + 1}. ${serverQueue.songs[i].title}\`\n`;
+                }
+            }
+            if (songList.length < 1950) {
+                var queueembed = new Discord.RichEmbed()
+                    .setColor(randomcolor)
+                    .setAuthor("The song queue of " + message.guild.name + " currently has:", message.guild.iconURL == null ? "https://images-ext-1.discordapp.net/external/v1EV83IWPZ5tg7b5NJwfZO_drseYr7lSlVjCJ_-PncM/https/cdn.discordapp.com/icons/268683615632621568/168a880bdbc1cb0b0858f969b2247aa3.jpg?width=80&height=80" : message.guild.iconURL)
+                    .setDescription(`${songList}`)
+                    .setFooter("Developed by: PK#1650 ", "https://cdn.discordapp.com/attachments/399064303170224131/405585474988802058/videotogif_2018.01.24_10.14.40.gif")
+                    .setTimestamp();
+                message.channel.send({ embed: queueembed });
+            } else {
+                message.channel.send(`${songList}`, { split: "\n" });
+            }
+        } else {
+            message.channel.send("No song is in the queue", { reply: message });
+        }
+    }
+
+    if (command === "volume" || command === "sv" || command === "setvolume") {
+        if (message.member.voiceChannel !== undefined) {
+            if (!message.guild.me.voiceChannel) {
+                message.channel.send("bot is not in voice channel", { reply: message });
+                return;
+            }
+            let args2 = args.join("").substring(command.length);
+            if (args2 > 100) {
+                message.channel.send("Invalid Volume! Please provide a volume from 1 to 100.");
+                return;
+            }
+            if (args2 < 1) {
+                message.channel.send("Invalid Volume! Please provide a volume from 1 to 100.");
+                return;
+            }
+            if (isNaN(args2)) {
+                message.channel.send(args2);
+                message.channel.send(`please provide a valid input. example \`${prefix}volume 100\``, { reply: message });
+                return;
+            }
+            serverQueue.volume[message.guild.id] = args2;
+            dispatcher.setVolumeLogarithmic(args2 / 80);
+            var setvolembed = new Discord.RichEmbed()
+                .setColor(randomcolor)
+                .setAuthor("volume controls", "https://cdn.discordapp.com/attachments/398789265900830760/405592021579989003/videotogif_2018.01.24_10.46.57.gif")
+                .setDescription(`volume set ${args2}%`)
+                .setThumbnail("https://images-ext-1.discordapp.net/external/v1EV83IWPZ5tg7b5NJwfZO_drseYr7lSlVjCJ_-PncM/https/cdn.discordapp.com/icons/268683615632621568/168a880bdbc1cb0b0858f969b2247aa3.jpg?width=80&height=80")
+                .setFooter("Changed by: " + message.author.username.toString(), message.author.displayAvatarURL)
+                .setTimestamp();
+            message.channel.send({ embed: setvolembed });
+            bot.channels.get(botmlogchannel).send(`**${message.author.username}** using volume command in **${message.guild.name}** volume: **${args2}**`);
+        } else {
+            message.channel.send("you cant change volume if you are not in voice channel", { reply: message });
+        }
+    }
 });
+
+var addSong = function(message, video, voiceChannel, playlist = false) {
+    const serverQueue = songQueue.get(message.guild.id);
+    const song = {
+        id: video.id,
+        title: /*Util.escapeMarkdown(*/ video.title,
+        url: `https://www.youtube.com/watch?v=${video.id}`,
+        duration: `${video.duration.hours}:${video.duration.minutes}:${video.duration.seconds}`,
+        thumbnail: video.thumbnails.high.url,
+        author: video.author = message.author,
+        user: message.author.username,
+        usravatar: message.author.displayAvatarURL
+    };
+    if (!serverQueue) {
+        const queueConstruct = {
+            textChannel: message.channel,
+            voiceChannel: voiceChannel,
+            connection: null,
+            songs: [],
+            volume: [],
+            playing: true
+        };
+        songQueue.set(message.guild.id, queueConstruct);
+
+        queueConstruct.songs.push(song);
+    } else {
+        serverQueue.songs.push(song);
+        let Discord = require('discord.js');
+        if (playlist) {
+            if (!bot.voiceConnections.exists("channel", message.member.voiceChannel)) {
+                message.member.voiceChannel.join().then(function(connection) {
+                    playSong(message, connection);
+                }).catch(err => bot.channels.get(boterrorchannel).send(`${message.author.username} from ${message.guild.name} play command and error in addsong \n${err}`)); //removed consol log
+            }
+            return
+        } else {
+            let embed = new Discord.RichEmbed()
+                .setAuthor(`I have added \`${song.title}\` to the song queue!`, "https://cdn.discordapp.com/attachments/398789265900830760/405592021579989003/videotogif_2018.01.24_10.46.57.gif")
+                .setDescription("link here: " + `[click](${song.url})`)
+                .setColor(randomcolor)
+                .setThumbnail(song.thumbnail)
+                .addField("**Length**", song.duration, true)
+                .addField("Requested by", song.author, true)
+                .setFooter("Added by: " + message.author.username.toString(), message.author.displayAvatarURL)
+                .setTimestamp()
+            message.channel.send({ embed });
+        }
+    }
+    if (!bot.voiceConnections.exists("channel", message.member.voiceChannel)) {
+        message.member.voiceChannel.join().then(function(connection) {
+            playSong(message, connection);
+        }).catch(err => bot.channels.get(boterrorchannel).send(`${message.author.username} from ${message.guild.name} play command and error in addsong \n${err}`)); //removed consol log
+    }
+}
+
+var playSong = function(message, connection) {
+    const serverQueue = songQueue.get(message.guild.id);
+    if (shuffle) {
+        do {
+            currentSongIndex = Math.floor(Math.random() * serverQueue.songs.length);
+        } while (currentSongIndex === previousSongIndex);
+    }
+
+    var currentSong = serverQueue.songs[currentSongIndex];
+    if (currentSong) {
+        var stream = ytdl(currentSong.url, { "filter": "audioonly" });
+        dispatcher = connection.playStream(stream, { volume: serverQueue.volume[message.guild.id] / 80 });
+        var nowplayembed = new Discord.RichEmbed()
+            .setColor(randomcolor)
+            .setAuthor(`Now ${(shuffle) ? "randomly " : ""}playing \`${currentSong.title}\``, "https://cdn.discordapp.com/attachments/398789265900830760/405592021579989003/videotogif_2018.01.24_10.46.57.gif")
+            .setDescription("link here: " + `[click](${currentSong.url})`)
+            .setURL(`${currentSong.url}`)
+            .setThumbnail(`${currentSong.thumbnail}`)
+            .addField("**Length**", currentSong.duration, true)
+            .addField("Requested by", currentSong.author, true)
+            .setFooter("Requested by: " + `${currentSong.user}`, currentSong.usravatar)
+            .setTimestamp();
+        message.channel.send({ embed: nowplayembed });
+        bot.channels.get(botmlogchannel).send(`**${message.author.tag}**` + ` playing ` + `\`\`${currentSong.title}\`\`` + ` in ` + `**${message.guild.name}**` + ` server`);
+        dispatcher.player.on("warn", console.warn);
+        dispatcher.on("warn", console.warn);
+        dispatcher.on("error", console.error);
+        dispatcher.once("end", function(reason) { //bot.channels.get(botlogchannel).send("Song ended because: " + reason);
+            if (reason === "user" || reason === "Stream is not generating quickly enough.") {
+                if (autoremove) {
+                    serverQueue.splice(curre1ntSongIndex, 1);
+                    if (serverQueue.songs.length === 0) {
+                        message.member.voiceChannel.leave();
+                    } else {
+                        setTimeout(function() {
+                            playSong(message, connection);
+                        }, 500);
+                    }
+                } else {
+                    currentSongIndex++;
+                    if (currentSongIndex >= serverQueue.songs.length && !shuffle) {
+                        message.member.voiceChannel.leave();
+                        var finishembed = new Discord.RichEmbed()
+                            .setColor(randomcolor)
+                            .setAuthor("Finished playing because no more song in the queue", "https://cdn.discordapp.com/attachments/398789265900830760/405592021579989003/videotogif_2018.01.24_10.46.57.gif")
+                            .setDescription("please add more song if you like 🎧")
+                            .setFooter("Developed by: PK#1650 ", "https://cdn.discordapp.com/attachments/399064303170224131/405585474988802058/videotogif_2018.01.24_10.14.40.gif")
+                            .setTimestamp();
+                        message.channel.send({ embed: finishembed });
+                    } else {
+                        setTimeout(function() {
+                            playSong(message, connection);
+                        }, 500);
+                    }
+                }
+            } else if (reason === "prev" || reason === "next" || reason === "goto" || reason === "random") {
+                setTimeout(function() {
+                    playSong(message, connection);
+                }, 500);
+            }
+        });
+    }
+};
 const randomcolor = '0x' + Math.floor(Math.random() * 16777215).toString(16);
+
+function newFunction() {
+    return queue.message.guild.id;
+}
+
+bot.on('guildMemberAdd', async(member) => {
+    const wmstatus = (await db.ref(`servers/${member.guild.id}`).child('welcomeMstatus').once('value')).val();
+    const wtextonoff = (await db.ref(`servers/${member.guild.id}`).child('wtextonoff').once('value')).val();
+    const wimageonoff = (await db.ref(`servers/${member.guild.id}`).child('wimageonoff').once('value')).val();
+    const wuinfoonoff = (await db.ref(`servers/${member.guild.id}`).child('wuinfoonoff').once('value')).val();
+    const wm = (await db.ref(`servers/${member.guild.id}`).child('wmessage').once('value')).val();
+    const wc = (await db.ref(`servers/${member.guild.id}`).child('wchannelid').once('value')).val();
+    const fn = Math.floor(Math.random() * wfortunes.length);
+    const fact = `${wfortunes[fn]}`;
+    const fact2 = `${fact.replace('{user}', member.user.username)}`
+    const rn = Math.floor(Math.random() * wimages.length);
+    const images = `${wimages[rn]}`;
+    const ms = bot.guilds.filter((guild) => guild.ownerID === member.user.id).filter((guild) => guild.memberCount > 200).map((guild) => guild.name);
+    const mm = bot.guilds.filter((guild) => guild.ownerID === member.user.id).filter((guild) => guild.memberCount > 200).map((guild) => guild.memberCount)
+    let nemoji = bot.emojis.get("439708397294714881")
+    let time = member.joinedAt - member.user.createdAt;
+    let d = Math.floor(time / 86400000);
+    if (d === 0) {
+        days = "";
+    } else {
+        days = d + " days ";
+    }
+    let h = Math.floor(time / 3600000 % 24);
+    if (h === 0) {
+        hours = "";
+    } else {
+        hours = h + " hours ";
+    }
+    let minutes = Math.floor((time % 3600000) / 60000) + " minutes";
+    if (wmstatus === "on") {
+        if (wc === null) return;
+        if (wtextonoff === "on") {
+            if (wm === null) {
+                member.guild.channels.get(wc.toString()).send(`${member} welcome to ${member.guild.name} you are the ${member.guild.memberCount}${ord(member.guild.memberCount)} user`)
+            } else {
+                member.guild.channels.get(wc.toString()).send(wm.replace('{user}', member.toString()).replace('{members}', member.guild.memberCount));
+            }
+        }
+        if (wimageonoff === "on") {
+            let u = `you are the ${member.guild.memberCount}${ord(member.guild.memberCount)} user`;
+            let s = member.guild.name;
+            let img = member.user.displayAvatarURL;
+            Jimp.read(`https://cloud.githubusercontent.com/assets/414918/11165709/051d10b0-8b0f-11e5-864a-20ef0bada8d6.png`).then(function(mask) {
+                Jimp.read(img).then(function(image) {
+                    Jimp.read(images).then(function(image2) {
+                        Jimp.loadFont(Jimp.FONT_SANS_16_BLACK).then(function(font) {
+                            image2.print(font, 121, 57, s);
+                            image2.print(font, 103, 79, u);
+                            image2.print(font, 103, 57, "to");
+                            image2.print(font, 11, 101, fact2)
+                            image2.print(font, 103, 4, "Welcome");
+                            Jimp.loadFont(Jimp.FONT_SANS_16_WHITE).then(function(font) {
+                                image2.print(font, 120, 56, s);
+                                image2.print(font, 102, 56, "to")
+                                image2.print(font, 10, 100, fact2)
+                                image2.print(font, 102, 78, u);
+                                image2.print(font, 102, 3, "Welcome");
+                                Jimp.loadFont(Jimp.FONT_SANS_32_BLACK).then(function(font) {
+                                    image2.print(font, 104, 20, member.user.tag);
+                                    Jimp.loadFont(Jimp.FONT_SANS_32_WHITE).then(function(font) {
+                                        image2.print(font, 102, 18, member.user.tag)
+                                        image2.resize(1600, 480);
+                                        image.resize(360, 360);
+                                        mask.resize(360, 360);
+                                        image.mask(mask, 0, 0);
+                                        image2.composite(image, 5, 5);
+                                        image2.getBuffer(Jimp.MIME_PNG,
+                                            (error, buffer) => { member.guild.channels.get(wc.toString()).send({ files: [{ name: 'welcome.png', attachment: buffer }] }); });
+                                    });
+                                });
+                            });
+                        });
+                    });
+                })
+            });
+        }
+        if (wuinfoonoff === "on") {
+            if (mm == 0) {} else {
+                member.guild.channels.get(wc.toString()).send(`:crown: Owner of ${ms} server with ${mm} members`)
+            }
+            if (member.user.id === botowner) {
+                member.guild.channels.get(wc.toString()).send(`:military_medal: Owner of ICW BOT`)
+            }
+            if (icwstaff.includes(member.user.id)) {
+                member.guild.channels.get(wc.toString()).send(`:medal: Staff member of ICW`)
+            }
+            if (member.user.displayAvatarURL.slice(-4) === ".gif") {
+                member.guild.channels.get(wc.toString()).send(nemoji + " nitro user")
+            }
+            if (member.user.bot === true) {
+                if (time < 432000000) {
+                    member.guild.channels.get(wc.toString()).send(":no_entry_sign: bot created " + `${days} ${hours} ${minutes}` + " ago")
+                }
+            }
+        }
+    } else { return }
+})
+
+bot.on('guildMemberRemove', async(member) => {
+    const wc = (await db.ref(`servers/${member.guild.id}`).child('wchannelid').once('value')).val();
+    const wmstatus = (await db.ref(`servers/${member.guild.id}`).child('welcomeMstatus').once('value')).val();
+    const wleavetextonoff = (await db.ref(`servers/${member.guild.id}`).child('wleavetextonoff').once('value')).val();
+    const lm = (await db.ref(`servers/${member.guild.id}`).child('lmessage').once('value')).val();
+    if (wmstatus === "on") {
+        if (wc === null) return;
+        if (wleavetextonoff === "on") {
+            if (lm === null) {
+                member.guild.channels.get(wc.toString()).send(`${member.user.tag} is left the server now we are ${member.guild.memberCount} members`)
+            } else {
+                member.guild.channels.get(wc.toString()).send(lm.replace('{user}', member.user.tag.toString()).replace('{members}', member.guild.memberCount));
+            }
+        }
+    } else { return }
+});
+
+bot.on("guildCreate", guild => { bot.channels.get(botleavejoinchannel).send(`New server joined: ${guild.name} (id: ${guild.id}). This server has ${guild.memberCount} members! and owner is ${guild.owner.user.username} now im in ${bot.guilds.size} servers`); });
+
+bot.on('guildDelete', guild => {
+    bot.channels.get(botleavejoinchannel).send(`Removed from ${guild.name} (id: ${guild.id}). and it was owned by ${guild.owner.user.username} (owner id: ${guild.owner.id}) now im in ${bot.guilds.size} servers`);
+    firebase.database().ref('servers/' + guild.id).set({ guildname: guild.name, guilddeleted: true }).catch(function(err) { bot.channles.get(boterrorchannel).send(err + "\n\n\n"); });
+});
 
 bot.on("error", function(err) {
     bot.channels.get(boterrorchannel).send(err);
