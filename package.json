@@ -5,7 +5,7 @@
         "heroku-postbuild": "npm run build"
     },
   "engines": {
-    "npm": "5.6.0",
+    "npm": "6.9.0",
     "node": "8.10.0"
   },
   "description": "A discord bot for didney worl who has an appetite for non-nutritive substances",
@@ -37,8 +37,8 @@
     "snekfetch": "^3.6.4-rc.0",
     "cheerio": "^1.0.0-rc.2",
     "firebase": "^4.11.0",
-    "ytdl-core": "^0.20.1",
-    "simple-youtube-api": "^5.0.1",
+    "ytdl-core": "^0.29.2",
+    "simple-youtube-api": "^5.0.2",
     "jimp": "^0.2.28",
     "stt": "0.0.1"
   }
