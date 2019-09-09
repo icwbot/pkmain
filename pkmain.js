@@ -117,17 +117,12 @@ bot.on("message", async(message) => {
     }
 });
 
-bot.on('message', message => {
+bot.on('message', async(message) => {
     if (message.author.bot) return undefined;
     if (message.channel.type == "dm" || message.channel.type == "group") return undefined;
     if (message.content.startsWith(`<@${bot.user.id}>`) || message.content.startsWith(`icw`) || message.content.startsWith(`Icw`) || message.content.startsWith(`ICW`)) {
-        clbot.configure({ botapi: process.env.CLEVERBOT_KEY });
-        Cleverbot.prepare(() => {
-            clbot.write(message.content, (response) => {
-                message.channel.startTyping(); //setTimeout(() => {
-                message.channel.send(response.message);
-                message.channel.stopTyping(); //}, Math.random() * (1 - 3) + 1 * 600);
-            })
+        message.channel.send(cbot.ask(message.content)).catch((e) => {
+            message.channel.send("-> " + e);
         });
         return;
     }
