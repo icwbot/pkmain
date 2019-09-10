@@ -1199,9 +1199,11 @@ var addSong = function(message, video, voiceChannel, playlist = false) {
             voiceChannel: voiceChannel,
             connection: null,
             songs: [],
+            volume: [],
             playing: true
         };
         songQueue.set(message.guild.id, queueConstruct);
+
         queueConstruct.songs.push(song);
         const volumeConstruct = {
             guildVolume: 80
