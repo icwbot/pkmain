@@ -11,7 +11,7 @@ const botlogchannel = "406504806954565644";
 const botmlogchannel = "409055298158985216";
 const botbuglogchannel = "418642505509240836";
 const boterrorchannel = "420955154695585792";
-const botleavejoinchannel = "431829603741466634";
+const botleavejoinchannel =`` "431829603741466634";
 const botrejectionschannel = "432090416834412545";
 const botowner = "264470521788366848";
 const wfortunes = ["{user} keep you`r shoes out of door", "hey {user} show your swag", "be carefull {user} is here! -_-", "{user} make the party awesome", "Hi {user} Take guitar & enjoy party", "hehe {user} are slide hide your dishes", "let's go {user} for chicken dinner"];
@@ -19,6 +19,7 @@ const wimages = [`https://imgur.com/Z2fpFVi.png`, `https://imgur.com/G29egX4.png
 const icwstaff = ["385099687465844736", "278587244443467777", "288961251973791744"];
 var dispatcher;
 const songQueue = new Map();
+const guildVolume = new Map();
 var currentSongIndex = 0;
 var previousSongIndex = 0;
 var shuffle = false;
@@ -1163,8 +1164,8 @@ bot.on("message", async(message) => {
                 message.channel.send(`please provide a valid input. example \`${prefix}volume 100\``, { reply: message });
                 return;
             }
-            serverQueue.volume[message.guild.id] = args2;
             dispatcher.setVolumeLogarithmic(args2 / 80);
+            guildVolume.set(message.guild.id).volume = args2;
             var setvolembed = new Discord.RichEmbed()
                 .setColor(randomcolor)
                 .setAuthor("volume controls", "https://cdn.discordapp.com/attachments/398789265900830760/405592021579989003/videotogif_2018.01.24_10.46.57.gif")
@@ -1198,12 +1199,14 @@ var addSong = function(message, video, voiceChannel, playlist = false) {
             voiceChannel: voiceChannel,
             connection: null,
             songs: [],
-            volume: ('80'),
             playing: true
         };
         songQueue.set(message.guild.id, queueConstruct);
-
         queueConstruct.songs.push(song);
+        const volumeConstruct = {
+            guildVolume: 80
+        };
+        guildVolume.set(message.guild.id, volumeConstruct);
     } else {
         serverQueue.songs.push(song);
         let Discord = require('discord.js');
@@ -1236,6 +1239,7 @@ var addSong = function(message, video, voiceChannel, playlist = false) {
 
 var playSong = function(message, connection) {
     const serverQueue = songQueue.get(message.guild.id);
+    }
     if (shuffle) {
         do {
             currentSongIndex = Math.floor(Math.random() * serverQueue.songs.length);
@@ -1245,7 +1249,7 @@ var playSong = function(message, connection) {
     var currentSong = serverQueue.songs[currentSongIndex];
     if (currentSong) {
         var stream = ytdl(currentSong.url, { "filter": "audioonly", "quality": "lowest" });
-        dispatcher = connection.playStream(stream, { volume: songQueue.get(message.guild.id).volume / 80 });
+        dispatcher = connection.playStream(stream, { volume: guildVolume.volume[message.guild.id] / 80 });
         var nowplayembed = new Discord.RichEmbed()
             .setColor(randomcolor)
             .setAuthor(`Now ${(shuffle) ? "randomly " : ""}playing \`${currentSong.title}\``, "https://cdn.discordapp.com/attachments/398789265900830760/405592021579989003/videotogif_2018.01.24_10.46.57.gif")
