@@ -17,7 +17,9 @@ const botowner = "264470521788366848";
 const wfortunes = ["{user} keep you`r shoes out of door", "hey {user} show your swag", "be carefull {user} is here! -_-", "{user} make the party awesome", "Hi {user} Take guitar & enjoy party", "hehe {user} are slide hide your dishes", "let's go {user} for chicken dinner"];
 const wimages = [`https://imgur.com/Z2fpFVi.png`, `https://imgur.com/G29egX4.png`, `https://imgur.com/LHdn5I8.png`, `https://imgur.com/GziAP26.png`, `https://imgur.com/GjI5Vpk.png`, `https://imgur.com/WqTnmM0.png`, `https://imgur.com/qknRCM7.png`];
 const icwstaff = ["385099687465844736", "278587244443467777", "288961251973791744"];
-var dispatcher;
+const icwlogo = "https://media.discordapp.net/attachments/406099961730564107/407455733689483265/Untitled6.png?width=300&height=300";
+const pkflashlogo = "https://cdn.discordapp.com/attachments/399064303170224131/405585474988802058/videotogif_2018.01.24_10.14.40.gif";
+const icwflashlogo = "https://cdn.discordapp.com/attachments/398789265900830760/405592021579989003/videotogif_2018.01.24_10.46.57.gif";
 const songQueue = new Map();
 const guildVolume = new Map();
 var currentSongIndex = 0;
@@ -32,6 +34,7 @@ var hbot = new Heroku({ email: 'pardeepsingh1236512365@gmail.com', api_key: 'Pro
 const { inspect } = require("util");
 const cheerio = require('cheerio');
 const snekfetch = require('snekfetch');
+const googleit = require('google-it');
 const querystring = require('querystring');
 const firebase = require("firebase");
 const Jimp = require("jimp");
@@ -116,6 +119,21 @@ bot.on("message", async(message) => {
             .replace(/`/g, "`" + String.fromCharCode(8203))
             .replace(/@/g, "@" + String.fromCharCode(8203));
     }
+    if (command === "hc") {
+        if (message.author.id !== botowner) {
+            message.reply('this command is only for bot owner!!!');
+            return;
+        }
+        const data = {
+            html: `<divclass='box'>${args}</div>`,
+            css: ".box{border:4pxsolid#03B875;padding:20px;font-family:'Roboto';}",
+            google_fonts: "Roboto"
+        }
+        request.post({ url: 'https://hcti.io/v1/image', form: data }).auth(process.env.HCTI_ID, process.env.HCTI_KEY).on('data', function(data) {
+            const image = JSON.parse(data)
+            message.channel.send({ files: [{ name: 'image.png', attachment: image["url"] }] });
+        })
+    }
 });
 
 bot.on('message', async(message) => {
@@ -176,8 +194,8 @@ bot.on("message", async(message) => {
             .addField("until commands", `cleverbot - (talk with bot with mention or icw \`\`example - icw hi\`\`) \`\`icw\`\` \ngoogle - (search anything) \`\`gsearch , g , \`\` \nweather - (check your city weather) \nsay - (bot saying your message) \ndiscrim - (found any discriminators) \nserverinfo - (info about server)`)
             .addField("Modration command", ` welcome - (welcoming the member) \n purge (delete multiple messages) \`\`delete\`\`, \`\`prune\`\` \n warn - (for warning a member) \n kick - (for kick a member) \n ban - (for ban a member)`)
             .addField("Music commands", `play - (for serach and add your song in thre queue) \`\`p\`\` \npause - (pause the player) \nresume - (resume the player) \nvolume - (set your player volume) \`\`sv , setvolume\`\` \nskip - (for next song) \`\`s , next\`\` \nprev - (for previos song) \nstop - (for stop the player) \nqueue - (for check playlist) \`\`q , playlist\`\` \nsong - (view current song) \`\`np , nowplaying\`\` \nrandom - (playing randomly)`)
-            .setThumbnail("https://media.discordapp.net/attachments/406099961730564107/407455733689483265/Untitled6.png?width=300&height=300")
-            .setFooter("Bot Developed by: PK#1650 ", "https://cdn.discordapp.com/attachments/399064303170224131/405585474988802058/videotogif_2018.01.24_10.14.40.gif")
+            .setThumbnail(`${icwlogo}`)
+            .setFooter("Bot Developed by: PK#1650 ", `${pkflashlogo}`)
             .addField("if you find any bug plz report it with command", `bugreport - (report for any bugs or problams) \`\`bug\`\``)
             .addField("support server", `[link](https://discord.gg/zFDvBay)`, inline = true)
             .addField("bot invite link", `[invite](https://discordapp.com/oauth2/authorize?client_id=376292306233458688&permissions=8&scope=bot)`, inline = true)
@@ -221,7 +239,7 @@ bot.on("message", async(message) => {
             var temp_min = parseFloat(data.main.temp_min) - 273.15;
             const embed = new Discord.RichEmbed()
                 .setTitle(data.name + ',' + data.sys.country)
-                .setAuthor("ICW weather info", "https://cdn.discordapp.com/attachments/398789265900830760/405592021579989003/videotogif_2018.01.24_10.46.57.gif")
+                .setAuthor("ICW weather info", `${icwflashlogo}`)
                 .setColor(randomcolor)
                 .setDescription(data.weather[0].description)
                 .setThumbnail("http://openweathermap.org/img/w/" + data.weather[0].icon + ".png")
@@ -237,14 +255,13 @@ bot.on("message", async(message) => {
     }
 
     if (command == "gsearch" || command === "google" || command === "g") {
-        let args3 = message.content.substring(command.length + prefix.length + 1);
+        let input = message.content.substring(command.length + prefix.length + 1);
         let searchMessage = await message.reply('Searching... Sec.');
-        let searchUrl = `https://www.google.com/search?q=${encodeURIComponent(args3)}`;
-        return snekfetch.get(searchUrl).then((result) => {
-            let $ = cheerio.load(result.text);
-            let googleData = $('.r').first().find('a').first().attr('href');
-            googleData = querystring.parse(googleData.replace('/url?', ''));
-            searchMessage.edit(`Result found!\n${googleData.q}`);
+        googleit({
+            query: input,
+            disableConsole: true
+        }).then(results => {
+            searchMessage.edit(`Result found!\n${results [0].link}`);
         }).catch((err) => {
             bot.channels.get(botrejectionschannel).send(`${message.author.username} using google command in dm \n${err}`)
             searchMessage.edit('No results found!');
@@ -285,8 +302,8 @@ bot.on("message", async(message) => {
             .addField("Total Users", `${bot.users.size}`)
             .addField("support server", `[link](https://discord.gg/zFDvBay)`, inline = true)
             .addField("bot invite link", `[invite](https://discordapp.com/oauth2/authorize?client_id=376292306233458688&permissions=8&scope=bot)`, inline = true)
-            .setThumbnail("https://media.discordapp.net/attachments/406099961730564107/407455733689483265/Untitled6.png?width=300&height=300")
-            .setFooter("Developed by: PK#1650 ", "https://cdn.discordapp.com/attachments/399064303170224131/405585474988802058/videotogif_2018.01.24_10.14.40.gif")
+            .setThumbnail(`${icwlogo}`)
+            .setFooter("Developed by: PK#1650 ", `${pkflashlogo}`)
             .addField("please give me vote", `[vote and invite link](https://discordbots.org/bot/376292306233458688)`, inline = true)
             .addField("help with donate", `[patreon](https://www.patreon.com/icw)`, inline = true)
             .setTimestamp();
@@ -364,8 +381,8 @@ bot.on("message", async(message) => {
             .addField("until commands", `cleverbot - (talk with bot with mention or icw \`\`example - icw hi\`\`) \`\`icw\`\` \ngoogle - (search anything) \`\`gsearch , g , \`\` \nweather - (check your city weather) \nsay - (bot saying your message) \ndiscrim - (found any discriminators) \nserverinfo - (info about server)`)
             .addField("Modration command", ` welcome - (welcoming the member) \n purge (delete multiple messages) \`\`delete\`\`, \`\`prune\`\` \n warn - (for warning a member) \n kick - (for kick a member) \n ban - (for ban a member)`)
             .addField("Music commands", `play - (for serach and add your song in thre queue) \`\`p\`\` \npause - (pause the player) \nresume - (resume the player) \nvolume - (set your player volume) \`\`sv , setvolume\`\` \nskip - (for next song) \`\`s , next\`\` \nprev - (for previos song) \nstop - (for stop the player) \nqueue - (for check playlist) \`\`q , playlist\`\` \nsong - (view current song) \`\`np , nowplaying\`\` \nrandom - (playing randomly)`)
-            .setThumbnail("https://media.discordapp.net/attachments/406099961730564107/407455733689483265/Untitled6.png?width=300&height=300")
-            .setFooter("Bot Developed by: PK#1650 ", "https://cdn.discordapp.com/attachments/399064303170224131/405585474988802058/videotogif_2018.01.24_10.14.40.gif")
+            .setThumbnail(`${icwlogo}`)
+            .setFooter("Bot Developed by: PK#1650 ", `${pkflashlogo}`)
             .addField("if you find any bug plz report it with command", `bugreport - (report for any bugs or problams) \`\`bug\`\``)
             .addField("support server", `[link](https://discord.gg/zFDvBay)`, inline = true)
             .addField("bot invite link", `[invite](https://discordapp.com/oauth2/authorize?client_id=376292306233458688&permissions=8&scope=bot)`, inline = true)
@@ -410,7 +427,7 @@ bot.on("message", async(message) => {
             var temp_min = parseFloat(data.main.temp_min) - 273.15;
             const embed = new Discord.RichEmbed()
                 .setTitle(data.name + ',' + data.sys.country)
-                .setAuthor("ICW weather info", "https://cdn.discordapp.com/attachments/398789265900830760/405592021579989003/videotogif_2018.01.24_10.46.57.gif")
+                .setAuthor("ICW weather info", `${icwflashlogo}`)
                 .setColor(randomcolor)
                 .setDescription(data.weather[0].description)
                 .setThumbnail("http://openweathermap.org/img/w/" + data.weather[0].icon + ".png")
@@ -426,16 +443,15 @@ bot.on("message", async(message) => {
     }
 
     if (command == "gsearch" || command === "google" || command === "g") {
-        let args3 = args.join("").substring(command.length);
+        let input = message.content.substring(command.length + prefix.length + 1);
         let searchMessage = await message.reply('Searching... Sec.');
-        let searchUrl = `https://www.google.com/search?q=${encodeURIComponent(args3)}`;
-        return snekfetch.get(searchUrl).then((result) => {
-            let $ = cheerio.load(result.text);
-            let googleData = $('.r').first().find('a').first().attr('href');
-            googleData = querystring.parse(googleData.replace('/url?', ''));
-            searchMessage.edit(`Result found!\n${googleData.q}`);
+        googleit({
+            query: input,
+            disableConsole: true
+        }).then(results => {
+            searchMessage.edit(`Result found!\n${results [0].link}`);
         }).catch((err) => {
-            bot.channels.get(botrejectionschannel).send(`${message.author.username} from ${message.guild.id} using google command \n${err}`)
+            bot.channels.get(botrejectionschannel).send(`${message.author.username} using google command in dm \n${err}`)
             searchMessage.edit('No results found!');
         });
     }
@@ -474,8 +490,8 @@ bot.on("message", async(message) => {
             .addField("Total Users", `${bot.users.size}`)
             .addField("support server", `[link](https://discord.gg/zFDvBay)`, inline = true)
             .addField("bot invite link", `[invite](https://discordapp.com/oauth2/authorize?client_id=376292306233458688&permissions=8&scope=bot)`, inline = true)
-            .setThumbnail("https://media.discordapp.net/attachments/406099961730564107/407455733689483265/Untitled6.png?width=300&height=300")
-            .setFooter("Developed by: PK#1650 ", "https://cdn.discordapp.com/attachments/399064303170224131/405585474988802058/videotogif_2018.01.24_10.14.40.gif")
+            .setThumbnail(`${icwlogo}`)
+            .setFooter("Developed by: PK#1650 ", `${pkflashlogo}`)
             .addField("please give me vote", `[vote and invite link](https://discordbots.org/bot/376292306233458688)`, inline = true)
             .addField("help with donate", `[patreon](https://www.patreon.com/icw)`, inline = true)
             .setTimestamp();
@@ -852,7 +868,7 @@ bot.on("message", async(message) => {
             .addField("Voice channels:", `${guildVchannels}`, inline = true)
             .addField("Server Region:", `${serverregion}`)
             .setThumbnail(sicon)
-            .setFooter("Bot Developed by: PK#1650 ", "https://cdn.discordapp.com/attachments/399064303170224131/405585474988802058/videotogif_2018.01.24_10.14.40.gif")
+            .setFooter("Bot Developed by: PK#1650 ", `${pkflashlogo}`)
             .setTimestamp();
         message.channel.send({ embed: serverinfoembed });
     }
@@ -993,9 +1009,9 @@ bot.on("message", async(message) => {
                     message.member.voiceChannel.leave();
                     var finishembed = new Discord.RichEmbed()
                         .setColor(randomcolor)
-                        .setAuthor("Finished playing because no more song in the queue", "https://cdn.discordapp.com/attachments/398789265900830760/405592021579989003/videotogif_2018.01.24_10.46.57.gif")
+                        .setAuthor("Finished playing because no more song in the queue", `${icwflashlogo}`)
                         .setDescription("please add more song if you like 🎧")
-                        .setFooter("Developed by: PK#1650 ", "https://cdn.discordapp.com/attachments/399064303170224131/405585474988802058/videotogif_2018.01.24_10.14.40.gif")
+                        .setFooter("Developed by: PK#1650 ", `${pkflashlogo}`)
                         .setTimestamp();
                     message.channel.send({ embed: finishembed });
                 }
@@ -1070,7 +1086,7 @@ bot.on("message", async(message) => {
                 message.member.voiceChannel.leave();
                 var stopembed = new Discord.RichEmbed()
                     .setColor(randomcolor)
-                    .setAuthor("Finished playing by stop command", "https://cdn.discordapp.com/attachments/398789265900830760/405592021579989003/videotogif_2018.01.24_10.46.57.gif")
+                    .setAuthor("Finished playing by stop command", `${icwflashlogo}`)
                     .setDescription("thanks for using see you soon bye bye 👋")
                     .setFooter("Stoped by: " + message.author.username.toString(), message.author.displayAvatarURL)
                     .setTimestamp();
@@ -1133,7 +1149,7 @@ bot.on("message", async(message) => {
                     .setColor(randomcolor)
                     .setAuthor("The song queue of " + message.guild.name + " currently has:", message.guild.iconURL == null ? "https://images-ext-1.discordapp.net/external/v1EV83IWPZ5tg7b5NJwfZO_drseYr7lSlVjCJ_-PncM/https/cdn.discordapp.com/icons/268683615632621568/168a880bdbc1cb0b0858f969b2247aa3.jpg?width=80&height=80" : message.guild.iconURL)
                     .setDescription(`${songList}`)
-                    .setFooter("Developed by: PK#1650 ", "https://cdn.discordapp.com/attachments/399064303170224131/405585474988802058/videotogif_2018.01.24_10.14.40.gif")
+                    .setFooter("Developed by: PK#1650 ", `${pkflashlogo}`)
                     .setTimestamp();
                 message.channel.send({ embed: queueembed });
             } else {
@@ -1171,13 +1187,12 @@ bot.on("message", async(message) => {
             guildVolume.set(message.guild.id, volumeConstruct);
             var setvolembed = new Discord.RichEmbed()
                 .setColor(randomcolor)
-                .setAuthor("volume controls", "https://cdn.discordapp.com/attachments/398789265900830760/405592021579989003/videotogif_2018.01.24_10.46.57.gif")
+                .setAuthor("volume controls", `${icwflashlogo}`)
                 .setDescription(`volume set ${args2}%`)
                 .setThumbnail("https://images-ext-1.discordapp.net/external/v1EV83IWPZ5tg7b5NJwfZO_drseYr7lSlVjCJ_-PncM/https/cdn.discordapp.com/icons/268683615632621568/168a880bdbc1cb0b0858f969b2247aa3.jpg?width=80&height=80")
                 .setFooter("Changed by: " + message.author.username.toString(), message.author.displayAvatarURL)
                 .setTimestamp();
             message.channel.send({ embed: setvolembed });
-            bot.channels.get(botmlogchannel).send(`**${message.author.username}** using volume command in **${message.guild.name}** volume: **${args2}**`);
         } else {
             message.channel.send("you cant change volume if you are not in voice channel", { reply: message });
         }
@@ -1223,7 +1238,7 @@ var addSong = function(message, video, voiceChannel, playlist = false) {
             return
         } else {
             let embed = new Discord.RichEmbed()
-                .setAuthor(`I have added \`${song.title}\` to the song queue!`, "https://cdn.discordapp.com/attachments/398789265900830760/405592021579989003/videotogif_2018.01.24_10.46.57.gif")
+                .setAuthor(`I have added \`${song.title}\` to the song queue!`, `${icwflashlogo}`)
                 .setDescription("link here: " + `[click](${song.url})`)
                 .setColor(randomcolor)
                 .setThumbnail(song.thumbnail)
@@ -1255,7 +1270,7 @@ var playSong = function(message, connection) {
         dispatcher = connection.playStream(stream, { volume: guildVolume.get(message.guild.id).volume / 80 });
         var nowplayembed = new Discord.RichEmbed()
             .setColor(randomcolor)
-            .setAuthor(`Now ${(shuffle) ? "randomly " : ""}playing \`${currentSong.title}\``, "https://cdn.discordapp.com/attachments/398789265900830760/405592021579989003/videotogif_2018.01.24_10.46.57.gif")
+            .setAuthor(`Now ${(shuffle) ? "randomly " : ""}playing \`${currentSong.title}\``, `${icwflashlogo}`)
             .setDescription("link here: " + `[click](${currentSong.url})`)
             .setURL(`${currentSong.url}`)
             .setThumbnail(`${currentSong.thumbnail}`)
@@ -1285,9 +1300,9 @@ var playSong = function(message, connection) {
                         message.member.voiceChannel.leave();
                         var finishembed = new Discord.RichEmbed()
                             .setColor(randomcolor)
-                            .setAuthor("Finished playing because no more song in the queue", "https://cdn.discordapp.com/attachments/398789265900830760/405592021579989003/videotogif_2018.01.24_10.46.57.gif")
+                            .setAuthor("Finished playing because no more song in the queue", `${icwflashlogo}`)
                             .setDescription("please add more song if you like 🎧")
-                            .setFooter("Developed by: PK#1650 ", "https://cdn.discordapp.com/attachments/399064303170224131/405585474988802058/videotogif_2018.01.24_10.14.40.gif")
+                            .setFooter("Developed by: PK#1650 ", `${pkflashlogo}`)
                             .setTimestamp();
                         message.channel.send({ embed: finishembed });
                     } else {
@@ -1380,7 +1395,7 @@ bot.on('guildMemberAdd', async(member) => {
                                             image.mask(mask, 0, 0);
                                             image2.composite(image, 5, 5);
                                             image2.getBuffer(Jimp.MIME_PNG,
-                                            (error, buffer) => { member.guild.channels.get(wc.toString()).send({ files: [{ name: 'welcome.png', attachment: buffer }] }); });
+                                                (error, buffer) => { member.guild.channels.get(wc.toString()).send({ files: [{ name: 'welcome.png', attachment: buffer }] }); });
                                         });
                                     });
                                 });
@@ -1388,7 +1403,7 @@ bot.on('guildMemberAdd', async(member) => {
                         });
                     })
                 });
-            } else { 
+            } else {
                 let u = `you are the ${member.guild.memberCount}${ord(member.guild.memberCount)} user`;
                 let s = member.guild.name;
                 let img = member.user.displayAvatarURL;
@@ -1417,7 +1432,7 @@ bot.on('guildMemberAdd', async(member) => {
                                             image.mask(mask, 0, 0);
                                             image2.composite(image, 5, 5);
                                             image2.getBuffer(Jimp.MIME_PNG,
-                                            (error, buffer) => { member.guild.channels.get(wc.toString()).send({ files: [{ name: 'welcome.png', attachment: buffer }] }); });
+                                                (error, buffer) => { member.guild.channels.get(wc.toString()).send({ files: [{ name: 'welcome.png', attachment: buffer }] }); });
                                         });
                                     });
                                 });
@@ -1425,7 +1440,7 @@ bot.on('guildMemberAdd', async(member) => {
                         });
                     })
                 });
-            
+
             }
         }
         if (wuinfoonoff === "on") {
