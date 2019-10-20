@@ -590,6 +590,8 @@ bot.on("message", async(message) => {
     const wimageonoff = (await db.ref(`servers/${message.guild.id}`).child('wimageonoff').once('value')).val();
     const wuinfoonoff = (await db.ref(`servers/${message.guild.id}`).child('wuinfoonoff').once('value')).val();
     const welcomeMstatus = (await db.ref(`servers/${message.guild.id}`).child('welcomeMstatus').once('value')).val();
+    const wcustomimageonoff = (await db.ref(`servers/${message.guild.id}`).child('wcustomimageonoff').once('value')).val();
+    const wcustomimageurl = (await db.ref(`servers/${message.guild.id}`).child('wcustomimageurl').once('value')).val();
     const wm = (await db.ref(`servers/${message.guild.id}`).child('wmessage').once('value')).val();
     if (command === "welcome") {
         let arg = args.join().substring(command.length);
@@ -695,6 +697,34 @@ bot.on("message", async(message) => {
                 });
                 message.channel.send("welcome image is now enabled");
             }
+        } else if (c === "use-customimage") {
+            if (message.author.id !== botowner && !message.member.hasPermission("MANAGE_GUILD")) return message.channel.send(`U don't have permission to do that`);
+            if (wchannelid === null) return message.channel.send(`welcome channel not set please set the channel first with \`\`${prefix}welcome set-channel <#channel>\`\``);
+            if(wcustomimageurl === null) return message.channel.send(`not find any image please first set a custom image with commands \`\`${prefix}welcome set-customimage https://welcomecustomimage.jpg\`\` only .jpg or .png valid`)
+            if (!wcustomimageonoff) {
+                firebase.database().ref('servers/' + message.guild.id).update({
+                    wcustomimageonoff: "on"
+                }).catch(function(err) {
+                    message.channel.send(err + "\n\n\n");
+                });
+                message.channel.send("welcome custom image is now enabled");
+            }
+            if (wcustomimageonoff === "on") {
+                firebase.database().ref('servers/' + message.guild.id).update({
+                    wcustomimageonoff: "off"
+                }).catch(function(err) {
+                    message.channel.send(err + "\n\n\n");
+                });
+                message.channel.send("welcome custom image is now disabled");
+            }
+            if (wcustomimageonoff === "off") {
+                firebase.database().ref('servers/' + message.guild.id).update({
+                    wcustomimageonoff: "on"
+                }).catch(function(err) {
+                    message.channel.send(err + "\n\n\n");
+                });
+                message.channel.send("welcome custom image is now enabled");
+            }
         } else if (c === "use-userinfo") {
             if (message.author.id !== botowner && !message.member.hasPermission("MANAGE_GUILD")) return message.channel.send(`U don't have permission to do that`);
             if (wchannelid === null) return message.channel.send(`welcome channel not set please set the channel first with \`\`${prefix}welcome set-channel <#channel>\`\``)
@@ -744,6 +774,19 @@ bot.on("message", async(message) => {
                 message.channel.send(err + "\n\n\n");
             });
             message.channel.send(`leave message set successfully \n${arg2}`)
+        }else if (c === "set-customimage") {
+            if (message.author.id !== botowner && !message.member.hasPermission("MANAGE_GUILD")) return message.channel.send(`U don't have permission to do that`);
+            if (wchannelid === null) return message.channel.send(`welcome channel not set please set the channel first with \`\`${prefix}welcome set-channel <#channel>\`\``);
+            let arg2 = arg.substring(c.length)
+            if (!arg2) return message.channel.send(`please add image url after command like \n\`\`${prefix}welcome set-customimage https://customwelcomeimage.jpg\`\``)
+            let arg3 = arg2.slice
+            if (arg3 === ".png" || arg3 === ".jpg") return message.channel.send(`its not a vaild url plz check your url is a image url only .png or .jpg vaild`);
+            firebase.database().ref('servers/' + message.guild.id).update({
+                wcustomimageurl: arg2
+            }).catch(function(err) {
+                message.channel.send(err + "\n\n\n");
+            });
+            message.channel.send(`custom image set successfully \n${arg2}`)
         } else if (c === "set-channel") {
             if (message.author.id !== botowner && !message.member.hasPermission("MANAGE_GUILD")) return message.channel.send(`U don't have permission to do that`)
             let wc = message.mentions.channels.first()
@@ -810,7 +853,8 @@ bot.on("message", async(message) => {
             \n:black_square_button: | \`\`use-image\`\` switch of welcome image
             \n:black_square_button: | \`\`use-jointext\`\` switch of user join text
             \n:black_square_button: | \`\`use-leavetext\`\` switch of user leave text
-            \n:black_square_button: | \`\`use-userinfo\`\` switch of userinfo (if user is owner of 200+ members server)
+            \n:black_square_button: | \`\`use-customimage\`\` switch of custom welcome image
+            \n:black_square_button: | \`\`set-customimage\`\` set custom image for welcome
             \n:black_square_button: | \`\`set-joinmessage <message>\`\` set join message for welcome
             \n:black_square_button: | \`\`set-leavemessage <message>\`\` set leave message
             \n:black_square_button: | \`\`set-channel <#channel>\`\` set channel for welcome
@@ -822,7 +866,7 @@ bot.on("message", async(message) => {
             \n:black_square_button: | welcome userinfo text switch is **${wuinfoonoff}**
             \n:black_square_button: | welcome image switch is **${wimageonoff}**
             `)
-        }
+        } /*\n:black_square_button: | \`\`use-userinfo\`\` switch of userinfo (if user is owner of 200+ members server)*/
     }
 
     if (command === "warn") {
