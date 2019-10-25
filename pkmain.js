@@ -107,11 +107,12 @@ bot.on('message', async(message) => {
             });
             message.channel.send(`prefix updated ${arg} for ${message.guild.name}`);
         }
-        const cmd = ["help", "play"]
+        const cmd = ["ping", "invite", "botinfo", "uptime", "weather", "say", "serverinfo", "welcome", "purge", "warn", "kick", "ban",
+                    "play", "pause", "resume", "volume", "skip", "prev", "stop", "queue", "song", "random", "bugreport", "google"]
 
         if (cmd.includes(command)) {
             if (gprefix) {
-                return message.channel.send(`there is a custom prefix found for this server plz take a command \nprefix is ${gprefix} for this server`)
+                return message.channel.send(`there is a custom prefix for this server plz use that prefix \nprefix is ${gprefix} for this server`)
             }
         }
     }
