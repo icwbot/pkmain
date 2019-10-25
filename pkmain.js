@@ -111,7 +111,7 @@ bot.on('message', async(message) => {
                     "play", "pause", "resume", "volume", "skip", "prev", "stop", "queue", "song", "random", "bugreport", "google"]
 
         if (cmd.includes(command)) {
-            if (gprefix) {
+            if (gprefix && gprefix === prefix) {
                 return message.channel.send(`there is a custom prefix for this server plz use that prefix \nprefix is ${gprefix} for this server`)
             }
         }
