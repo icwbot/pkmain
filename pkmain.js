@@ -81,6 +81,33 @@ bot.on('message', async(message) => {
         });
         return;
     }
+    const gprefix = (await db.ref(`servers/${message.guild.id}`).child('guildprefix').once('value')).val();
+    args = message.content.substring(prefix.length + 1).split();
+    comarg = message.content.slice(prefix.length).trim().split(/ +/g);
+    const command = comarg.shift().toLowerCase();
+    if (message.content.startsWith(prefix)) {
+        if (command === "prefix") {
+            if (gprefix === null) {
+                return message.channel.send(`there is custom prefix not found for this server plz take a command \`\`${prefix}setprefix\`\` if you want to set the server custom prefix`)
+            } else {
+                message.channel.send(`The current prefix is ${gprefix} of ${message.guild.name}`);
+            }
+        }
+
+        if (command === "setprefix") {
+            if (message.author.id !== botowner && !message.member.hasPermission("MANAGE_GUILD")) return message.channel.send(`U don't have permission to do that`);
+            let arg = args.join("").substring(command.length)
+            let arg2 = arg.replace(/\s/g,'');
+            if (!arg) return message.channel.send(`Please add a prefix after command like \`\`${prefix}setprefix &\`\``);
+            firebase.database().ref('servers/' + message.guild.id).update({
+                guildname: message.guild.name,
+                guildprefix: arg2
+            }).catch(function(err) {
+                message.channel.send(err + "\n\n\n");
+            });
+            message.channel.send(`prefix updated ${arg} for ${message.guild.name}`);
+        }
+    }
 });
 
 /*----------------------------------------------------------------------------------------------------------------
