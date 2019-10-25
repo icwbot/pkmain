@@ -359,7 +359,7 @@ bot.on("message", async(message) => {
         .ref(`servers/${message.guild.id}`)
         .child('guildprefix')
 		.once('value')).val();
-	if (!gprefix || gprefix === null) {
+	if (!gprefix && gprefix === null) {
 		cprefix = prefix
 	} else {
 		cprefix = gprefix
