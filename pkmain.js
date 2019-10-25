@@ -99,253 +99,253 @@ bot.on('message', async(message) => {
 ----------------------------------------------------------------------------------------------------------------*/
 
 bot.on("message", async(message) => {
-    const sstatus = (await db.ref(`bot/`).child('sstatus').once('value')).val();
-    bot.user.setPresence({ status: `streaming`, game: { name: `${sstatus}`, type: `STREAMING`, url: `https://www.twitch.tv/pardeepsingh12365` } });
+        const sstatus = (await db.ref(`bot/`).child('sstatus').once('value')).val();
+        bot.user.setPresence({ status: `streaming`, game: { name: `${sstatus}`, type: `STREAMING`, url: `https://www.twitch.tv/pardeepsingh12365` } });
 
-    if (message.author.bot) return undefined;
-    const randomcolor = '0x' + Math.floor(Math.random() * 16777215).toString(16);
+        if (message.author.bot) return undefined;
+        const randomcolor = '0x' + Math.floor(Math.random() * 16777215).toString(16);
 
-    if (!message.channel.type == "dm" || !message.channel.type == "group") return undefined;
-    if (message.guild) return undefined
-    args = message.content.substring(prefix.length + 1).split();
-    comarg = message.content.slice(prefix.length).trim().split(/ +/g);
-    const command = comarg.shift().toLowerCase();
+        if (!message.channel.type == "dm" || !message.channel.type == "group") return undefined;
+        if (message.guild) return undefined
+        args = message.content.substring(prefix.length + 1).split();
+        comarg = message.content.slice(prefix.length).trim().split(/ +/g);
+        const command = comarg.shift().toLowerCase();
 
-    if (command === "setstream" || command === "ss") {
-        let arg2 = args.join().substring(command.length)
-        firebase.database().ref(`bot/`).update({
-            sstatus: arg2
-        }).catch(function(err) {
-            message.channel.send(err + "\n\n\n");
-        });
-        message.channel.send(`Stream updated successfully ${arg2}`);
-    }
-
-    if (command === "ping") {
-        let pingembed = new Discord.RichEmbed().setColor(randomcolor).addField("Pong! Websocket Latency:", `${bot.ping}`);
-        message.channel.send({ embed: pingembed })
-    }
-
-    if (command === "restart") {
-        if (message.author.id !== botowner) {
-            message.reply('this command is only for bot owner!!!');
-            return;
+        if (command === "setstream" || command === "ss") {
+            let arg2 = args.join().substring(command.length)
+            firebase.database().ref(`bot/`).update({
+                sstatus: arg2
+            }).catch(function(err) {
+                message.channel.send(err + "\n\n\n");
+            });
+            message.channel.send(`Stream updated successfully ${arg2}`);
         }
-        message.channel.send("bot restarting");
-        process.exit()
-    }
 
-    if (command === "eval") {
-        if (message.author.id !== botowner) {
-            message.reply('this command is only for bot owner!!!');
-            return;
+        if (command === "ping") {
+            let pingembed = new Discord.RichEmbed().setColor(randomcolor).addField("Pong! Websocket Latency:", `${bot.ping}`);
+            message.channel.send({ embed: pingembed })
         }
-        if (/bot.token/.exec(message.content.split(" ").slice(1).join(" "))) return message.channel.send("I think im not idiot");
-        const code = comarg.join(" ");
-        const token = bot.token.split("").join("[^]{0,2}");
-        const rev = bot.token.split("").reverse().join("[^]{0,2}");
-        const filter = new RegExp(`${token}|${rev}`, "g");
-        try {
-            let output = eval(code);
-            if (output instanceof Promise || (Boolean(output) && typeof output.then === "function" && typeof output.catch === "function")) output = await output;
-            output = inspect(output, { depth: 0, maxArrayLength: null });
-            output = output.replace(filter, "[TOKEN]");
-            output = clean(output);
-            if (output.length < 1950) {
-                message.channel.send(`\`\`\`js\n${output}\n\`\`\``);
-            } else {
-                message.channel.send(`${output}`, { split: "\n", code: "js" });
-            }
-        } catch (error) {
-            message.channel.send(`The following error occured \`\`\`js\n${error}\`\`\``);
-        }
-    }
 
-    function clean(text) {
-        return text
-            .replace(/`/g, "`" + String.fromCharCode(8203))
-            .replace(/@/g, "@" + String.fromCharCode(8203));
-    }
-    if (command === "hc") {
-        if (message.author.id !== botowner) {
-            message.reply('this command is only for bot owner!!!');
-            return;
-        }
-        let input = message.content.substring(command.length + prefix.length + 1);
-        const data = {
-            html: `<divclass='box'>${input}</div>`,
-            css: ".box{border:4pxsolid#03B875;padding:20px;font-family:'Roboto';}",
-            google_fonts: "Roboto"
-        }
-        request.post({
-                url: 'https://hcti.io/v1/image',
-                form: data
-            })
-            .auth(process.env.HCTI_ID, process.env.HCTI_KEY)
-            .on('data', function(data) {
-                const image = JSON.parse(data)
-                message.channel.send({ files: [{ name: 'image.png', attachment: image["url"] }] });
-            })
-    }
-
-
-    if (command === "help") {
-        let helpembed = new Discord.RichEmbed()
-            .setColor(randomcolor)
-            .setAuthor("Hi " + message.author.username.toString(), message.author.displayAvatarURL)
-            .setDescription(`ICW help Section \nDefault Prefix = ${prefix} \nvolume command is for all users \nmore commands coming soon`)
-            .addField("Custom Prefix", `setprefix - (for set the custom prefix for server) \nprefix - (for check the server prefix)`)
-            .addField("Bot info commands", `ping - (bot ping) \ninvite - (bot invite link)\nbotinfo - (info about the bot)\`\`info , botstatus\`\` \nuptime - (uptime of the bot)`)
-            .addField("until commands", `cleverbot - (talk with bot with mention or icw \`\`example - icw hi\`\`) \`\`icw\`\` \nweather - (check your city weather) \nsay - (bot saying your message) \nserverinfo - (info about server)`)
-            .addField("Modration command", ` welcome - (welcoming the member) \n purge (delete multiple messages) \`\`delete\`\`, \`\`prune\`\` \n warn - (for warning a member) \n kick - (for kick a member) \n ban - (for ban a member)`)
-            .addField("Music commands", `play - (for serach and add your song in thre queue) \`\`p\`\` \npause - (pause the player) \nresume - (resume the player) \nvolume - (set your player volume) \`\`sv , setvolume\`\` \nskip - (for next song) \`\`s , next\`\` \nprev - (for previos song) \nstop - (for stop the player) \nqueue - (for check playlist) \`\`q , playlist\`\` \nsong - (view current song) \`\`np , nowplaying\`\` \nrandom - (playing randomly)`)
-            .setThumbnail(`${icwlogo}`)
-            .setFooter("Bot Developed by: PK#1650 ", `${pkflashlogo}`)
-            .addField("if you find any bug plz report it with command", `bugreport - (report for any bugs or problams) \`\`bug\`\``)
-            .addField("support server", `[link](https://discord.gg/zFDvBay)`, inline = true)
-            .addField("bot invite link", `[invite](https://discordapp.com/oauth2/authorize?client_id=376292306233458688&permissions=8&scope=bot)`, inline = true)
-            .addField("please give upvote", `[vote and invite link](https://top.gg/bot/376292306233458688)`, inline = true)
-            .addField("help with donate", `[patreon](https://www.patreon.com/icw)`, inline = true)
-            .setImage(icwflahimg)
-            .setTimestamp();
-        message.author.send({ embed: helpembed });
-    }
-
-    if (command === "say") {
-        message.delete().catch(err => bot.channels.get(botrejectionschannel).send(`${message.author.username} using say command in dm \n${err}`))
-        message.channel.send(args.join("").substring(3));
-    }
-
-    if (command === "bugreport" || command === "bug") {
-        let args2 = args.join("").substring(command.length);
-        if (!args2) return message.channel.send(`***plz add a bug message after command***`);
-        message.channel.send(`***Report sented succesfully thank you***`);
-        bot.channels.get(botbuglogchannel).send(`report by: **${message.author.tag}** from: **${message.guild.name}** (${message.guild.id}) \nbug: ${args2}`);
-    }
-
-    if (command === "servers") {
-        if (message.author.id !== botowner) {
-            message.reply('this command is only for bot owner!!!');
-            return;
-        }
-        let guilds = bot.guilds.map((guild) => `**${guild.name}** members: ${guild.members.size} id: (${guild.id})`);
-        message.channel.send(`I'm in the **${bot.guilds.size} guilds**:\n${guilds.join ('\n')}`, { split: "\n" })
-    }
-
-    if (command === "weather") {
-        var cityname = args.join("").substring(7);
-        var http = require('http');
-        request({
-            url: 'http://api.openweathermap.org/data/2.5/weather?q=' + cityname + '&APPID=' + owmkey
-        }, (error, response, body) => {
-            if (error) return;
-            var data = JSON.parse(body);
-            if (data.cod == "404") {
-                message.channel.send(data.message);
+        if (command === "restart") {
+            if (message.author.id !== botowner) {
+                message.reply('this command is only for bot owner!!!');
                 return;
             }
-            var weather_main = parseFloat(data.main.temp) - 273.15;
-            var temp_max = parseFloat(data.main.temp_max) - 273.15;
-            var temp_min = parseFloat(data.main.temp_min) - 273.15;
-            const embed = new Discord.RichEmbed()
-                .setTitle(data.name + ',' + data.sys.country)
-                .setAuthor("ICW weather info", `${icwflashlogo}`)
+            message.channel.send("bot restarting");
+            process.exit()
+        }
+
+        if (command === "eval") {
+            if (message.author.id !== botowner) {
+                message.reply('this command is only for bot owner!!!');
+                return;
+            }
+            if (/bot.token/.exec(message.content.split(" ").slice(1).join(" "))) return message.channel.send("I think im not idiot");
+            const code = comarg.join(" ");
+            const token = bot.token.split("").join("[^]{0,2}");
+            const rev = bot.token.split("").reverse().join("[^]{0,2}");
+            const filter = new RegExp(`${token}|${rev}`, "g");
+            try {
+                let output = eval(code);
+                if (output instanceof Promise || (Boolean(output) && typeof output.then === "function" && typeof output.catch === "function")) output = await output;
+                output = inspect(output, { depth: 0, maxArrayLength: null });
+                output = output.replace(filter, "[TOKEN]");
+                output = clean(output);
+                if (output.length < 1950) {
+                    message.channel.send(`\`\`\`js\n${output}\n\`\`\``);
+                } else {
+                    message.channel.send(`${output}`, { split: "\n", code: "js" });
+                }
+            } catch (error) {
+                message.channel.send(`The following error occured \`\`\`js\n${error}\`\`\``);
+            }
+        }
+
+        function clean(text) {
+            return text
+                .replace(/`/g, "`" + String.fromCharCode(8203))
+                .replace(/@/g, "@" + String.fromCharCode(8203));
+        }
+        if (command === "hc") {
+            if (message.author.id !== botowner) {
+                message.reply('this command is only for bot owner!!!');
+                return;
+            }
+            let input = message.content.substring(command.length + prefix.length + 1);
+            const data = {
+                html: `<divclass='box'>${input}</div>`,
+                css: ".box{border:4pxsolid#03B875;padding:20px;font-family:'Roboto';}",
+                google_fonts: "Roboto"
+            }
+            request.post({
+                    url: 'https://hcti.io/v1/image',
+                    form: data
+                })
+                .auth(process.env.HCTI_ID, process.env.HCTI_KEY)
+                .on('data', function(data) {
+                    const image = JSON.parse(data)
+                    message.channel.send({ files: [{ name: 'image.png', attachment: image["url"] }] });
+                })
+        }
+
+
+        if (command === "help") {
+            let helpembed = new Discord.RichEmbed()
                 .setColor(randomcolor)
-                .setDescription(data.weather[0].description)
-                .setThumbnail("http://openweathermap.org/img/w/" + data.weather[0].icon + ".png")
-                .setURL("https://openweathermap.org/city/" + data.name)
-                .addField("main", weather_main + " c", true)
-                .addField("pressure", data.main.pressure + " Hpz", true)
-                .addField("wind", data.wind.speed + " mph" + "/ Direction" + data.wind.deg, true)
-                .addField("visibility", data.visibility, true)
-                .setFooter("Requested by " + message.author.username.toString(), message.author.displayAvatarURL)
+                .setAuthor("Hi " + message.author.username.toString(), message.author.displayAvatarURL)
+                .setDescription(`ICW help Section \nDefault Prefix = ${prefix} \nvolume command is for all users \nmore commands coming soon`)
+                .addField("Custom Prefix", `setprefix - (for set the custom prefix for server) \nprefix - (for check the server prefix)`)
+                .addField("Bot info commands", `ping - (bot ping) \ninvite - (bot invite link)\nbotinfo - (info about the bot)\`\`info , botstatus\`\` \nuptime - (uptime of the bot)`)
+                .addField("until commands", `cleverbot - (talk with bot with mention or icw \`\`example - icw hi\`\`) \`\`icw\`\` \nweather - (check your city weather) \nsay - (bot saying your message) \nserverinfo - (info about server)`)
+                .addField("Modration command", ` welcome - (welcoming the member) \n purge (delete multiple messages) \`\`delete\`\`, \`\`prune\`\` \n warn - (for warning a member) \n kick - (for kick a member) \n ban - (for ban a member)`)
+                .addField("Music commands", `play - (for serach and add your song in thre queue) \`\`p\`\` \npause - (pause the player) \nresume - (resume the player) \nvolume - (set your player volume) \`\`sv , setvolume\`\` \nskip - (for next song) \`\`s , next\`\` \nprev - (for previos song) \nstop - (for stop the player) \nqueue - (for check playlist) \`\`q , playlist\`\` \nsong - (view current song) \`\`np , nowplaying\`\` \nrandom - (playing randomly)`)
+                .setThumbnail(`${icwlogo}`)
+                .setFooter("Bot Developed by: PK#1650 ", `${pkflashlogo}`)
+                .addField("if you find any bug plz report it with command", `bugreport - (report for any bugs or problams) \`\`bug\`\``)
+                .addField("support server", `[link](https://discord.gg/zFDvBay)`, inline = true)
+                .addField("bot invite link", `[invite](https://discordapp.com/oauth2/authorize?client_id=376292306233458688&permissions=8&scope=bot)`, inline = true)
+                .addField("please give upvote", `[vote and invite link](https://top.gg/bot/376292306233458688)`, inline = true)
+                .addField("help with donate", `[patreon](https://www.patreon.com/icw)`, inline = true)
                 .setImage(icwflahimg)
                 .setTimestamp();
-            message.channel.send({ embed });
-        });
-    }
-
-    if (command == "gsearch" || command === "google" || command === "g") {
-        if (message.author.id !== botowner) {
-            /*message.reply('this command is only for bot owner!!!');*/
-            return;
+            message.author.send({ embed: helpembed });
         }
-        let input = message.content.substring(command.length + prefix.length + 1);
-        let searchMessage = await message.reply('Searching... Sec.');
-        googleit({
-            query: input,
-            disableConsole: true
-        }).then(results => {
-            searchMessage.edit(`Result found!\n${results [0].link}`);
-        }).catch((err) => {
-            bot.channels.get(botrejectionschannel).send(`${message.author.username} using google command in dm \n${err}`)
-            searchMessage.edit('No results found!');
-        });
-    }
 
-    if (command === "discrim") {
-        if (message.author.id !== botowner) {
-            message.reply('this command is only for bot owner!!!');
-            return;
+        if (command === "say") {
+            message.delete().catch(err => bot.channels.get(botrejectionschannel).send(`${message.author.username} using say command in dm \n${err}`))
+            message.channel.send(args.join("").substring(3));
         }
-        const discrim = args.join("").substring(7);
-        if (!discrim) return message.reply("oops! I could not find the discriminator that you had given.");
-        if (typeof discrim !== 'integer')
-            if (discrim.size < 4) return message.reply("Don't you know that discrims are 4 numbers? -.-");
-        if (discrim.size > 4) return message.reply("Don't you know that discrims are 4 numbers? -.-");
-        let members = bot.users.filter(c => c.discriminator === discrim).map(c => c.username).join(`\n`);
-        if (!members) return message.reply("404 | No members have that discriminator!");
-        message.channel.send(`\`\`\`ICW Discrim Finder\nI found these discriminators.\n\n${members}#${discrim}\`\`\``, { split: "\n" });
-    }
 
-    if (command === "invite") {
-        message.channel.send("Invite URL: https://discordapp.com/oauth2/authorize?client_id=376292306233458688&permissions=8&scope=bot");
-    }
+        if (command === "bugreport" || command === "bug") {
+            let args2 = args.join("").substring(command.length);
+            if (!args2) return message.channel.send(`***plz add a bug message after command***`);
+            message.channel.send(`***Report sented succesfully thank you***`);
+            bot.channels.get(botbuglogchannel).send(`report by: **${message.author.tag}** from: **${message.guild.name}** (${message.guild.id}) \nbug: ${args2}`);
+        }
 
-    if (command === "botinfo" || command === "info" || command === "botstatus" || command === "status") {
-        let TextChannels = bot.channels.filter(e => e.type !== 'voice').size;
-        let VoiceChannels = bot.channels.filter(e => e.type === 'voice').size;
-        var infoembed = new Discord.RichEmbed()
-            .setAuthor("Hi " + message.author.username.toString(), message.author.displayAvatarURL)
-            .setTitle("info")
-            .setColor(randomcolor)
-            .setDescription(`this bot for music with volume control and fun`)
-            .addField("Devloped by", `PK#1650`, inline = true)
-            .addField("Try with", `${prefix}help`, inline = true)
-            .addField("CPU", `${process.cpuUsage().user/1024} MHz`, inline = true)
-            .addField("Ram", `${process.memoryUsage().rss/1024} kb`, inline = true)
-            .addField("Total Guilds", `${bot.guilds.size}`, inline = true)
-            .addField("Total Channels", `${bot.channels.size}`, inline = true)
-            .addField("Total Text Channels", `${TextChannels}`, inline = true)
-            .addField("Total Voice Channels", `${VoiceChannels}`, inline = true)
-            .addField("Total Users", `${bot.users.size}`)
-            .addField("support server", `[link](https://discord.gg/zFDvBay)`, inline = true)
-            .addField("bot invite link", `[invite](https://discordapp.com/oauth2/authorize?client_id=376292306233458688&permissions=8&scope=bot)`, inline = true)
-            .setThumbnail(`${icwlogo}`)
-            .setFooter("Developed by: PK#1650 ", `${pkflashlogo}`)
-            .addField("please give me vote", `[vote and invite link](https://top.gg/bot/376292306233458688)`, inline = true)
-            .addField("help with donate", `[patreon](https://www.patreon.com/icw)`, inline = true)
-            .setImage(icwflahimg)
-            .setTimestamp();
-        message.channel.send({ embed: infoembed });
-    }
+        if (command === "servers") {
+            if (message.author.id !== botowner) {
+                message.reply('this command is only for bot owner!!!');
+                return;
+            }
+            let guilds = bot.guilds.map((guild) => `**${guild.name}** members: ${guild.members.size} id: (${guild.id})`);
+            message.channel.send(`I'm in the **${bot.guilds.size} guilds**:\n${guilds.join ('\n')}`, { split: "\n" })
+        }
 
-    if (command === "uptime") {
-        var days = Math.floor(bot.uptime / 86400000000000);
-        var hours = Math.floor(bot.uptime / 3600000);
-        var minutes = Math.floor((bot.uptime % 3600000) / 60000);
-        var seconds = Math.floor(((bot.uptime % 360000) % 60000) / 1000);
-        const uptimeembed = new Discord.RichEmbed()
-            .setColor(randomcolor)
-            .setImage(icwflahimg)
-            .addField('Uptime', `${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds`);
-        message.channel.send({ embed: uptimeembed });
-    }
+        if (command === "weather") {
+            var cityname = args.join("").substring(7);
+            var http = require('http');
+            request({
+                url: 'http://api.openweathermap.org/data/2.5/weather?q=' + cityname + '&APPID=' + owmkey
+            }, (error, response, body) => {
+                if (error) return;
+                var data = JSON.parse(body);
+                if (data.cod == "404") {
+                    message.channel.send(data.message);
+                    return;
+                }
+                var weather_main = parseFloat(data.main.temp) - 273.15;
+                var temp_max = parseFloat(data.main.temp_max) - 273.15;
+                var temp_min = parseFloat(data.main.temp_min) - 273.15;
+                const embed = new Discord.RichEmbed()
+                    .setTitle(data.name + ',' + data.sys.country)
+                    .setAuthor("ICW weather info", `${icwflashlogo}`)
+                    .setColor(randomcolor)
+                    .setDescription(data.weather[0].description)
+                    .setThumbnail("http://openweathermap.org/img/w/" + data.weather[0].icon + ".png")
+                    .setURL("https://openweathermap.org/city/" + data.name)
+                    .addField("main", weather_main + " c", true)
+                    .addField("pressure", data.main.pressure + " Hpz", true)
+                    .addField("wind", data.wind.speed + " mph" + "/ Direction" + data.wind.deg, true)
+                    .addField("visibility", data.visibility, true)
+                    .setFooter("Requested by " + message.author.username.toString(), message.author.displayAvatarURL)
+                    .setImage(icwflahimg)
+                    .setTimestamp();
+                message.channel.send({ embed });
+            });
+        }
 
-})
-/*-----------------------------------------------------------------------------------------------------------------------
-            SERVERS COMMANDS
--------------------------------------------------------------------------------------------------------------------------*/
+        if (command == "gsearch" || command === "google" || command === "g") {
+            if (message.author.id !== botowner) {
+                /*message.reply('this command is only for bot owner!!!');*/
+                return;
+            }
+            let input = message.content.substring(command.length + prefix.length + 1);
+            let searchMessage = await message.reply('Searching... Sec.');
+            googleit({
+                query: input,
+                disableConsole: true
+            }).then(results => {
+                searchMessage.edit(`Result found!\n${results [0].link}`);
+            }).catch((err) => {
+                bot.channels.get(botrejectionschannel).send(`${message.author.username} using google command in dm \n${err}`)
+                searchMessage.edit('No results found!');
+            });
+        }
+
+        if (command === "discrim") {
+            if (message.author.id !== botowner) {
+                message.reply('this command is only for bot owner!!!');
+                return;
+            }
+            const discrim = args.join("").substring(7);
+            if (!discrim) return message.reply("oops! I could not find the discriminator that you had given.");
+            if (typeof discrim !== 'integer')
+                if (discrim.size < 4) return message.reply("Don't you know that discrims are 4 numbers? -.-");
+            if (discrim.size > 4) return message.reply("Don't you know that discrims are 4 numbers? -.-");
+            let members = bot.users.filter(c => c.discriminator === discrim).map(c => c.username).join(`\n`);
+            if (!members) return message.reply("404 | No members have that discriminator!");
+            message.channel.send(`\`\`\`ICW Discrim Finder\nI found these discriminators.\n\n${members}#${discrim}\`\`\``, { split: "\n" });
+        }
+
+        if (command === "invite") {
+            message.channel.send("Invite URL: https://discordapp.com/oauth2/authorize?client_id=376292306233458688&permissions=8&scope=bot");
+        }
+
+        if (command === "botinfo" || command === "info" || command === "botstatus" || command === "status") {
+            let TextChannels = bot.channels.filter(e => e.type !== 'voice').size;
+            let VoiceChannels = bot.channels.filter(e => e.type === 'voice').size;
+            var infoembed = new Discord.RichEmbed()
+                .setAuthor("Hi " + message.author.username.toString(), message.author.displayAvatarURL)
+                .setTitle("info")
+                .setColor(randomcolor)
+                .setDescription(`this bot for music with volume control and fun`)
+                .addField("Devloped by", `PK#1650`, inline = true)
+                .addField("Try with", `${prefix}help`, inline = true)
+                .addField("CPU", `${process.cpuUsage().user/1024} MHz`, inline = true)
+                .addField("Ram", `${process.memoryUsage().rss/1024} kb`, inline = true)
+                .addField("Total Guilds", `${bot.guilds.size}`, inline = true)
+                .addField("Total Channels", `${bot.channels.size}`, inline = true)
+                .addField("Total Text Channels", `${TextChannels}`, inline = true)
+                .addField("Total Voice Channels", `${VoiceChannels}`, inline = true)
+                .addField("Total Users", `${bot.users.size}`)
+                .addField("support server", `[link](https://discord.gg/zFDvBay)`, inline = true)
+                .addField("bot invite link", `[invite](https://discordapp.com/oauth2/authorize?client_id=376292306233458688&permissions=8&scope=bot)`, inline = true)
+                .setThumbnail(`${icwlogo}`)
+                .setFooter("Developed by: PK#1650 ", `${pkflashlogo}`)
+                .addField("please give me vote", `[vote and invite link](https://top.gg/bot/376292306233458688)`, inline = true)
+                .addField("help with donate", `[patreon](https://www.patreon.com/icw)`, inline = true)
+                .setImage(icwflahimg)
+                .setTimestamp();
+            message.channel.send({ embed: infoembed });
+        }
+
+        if (command === "uptime") {
+            var days = Math.floor(bot.uptime / 86400000000000);
+            var hours = Math.floor(bot.uptime / 3600000);
+            var minutes = Math.floor((bot.uptime % 3600000) / 60000);
+            var seconds = Math.floor(((bot.uptime % 360000) % 60000) / 1000);
+            const uptimeembed = new Discord.RichEmbed()
+                .setColor(randomcolor)
+                .setImage(icwflahimg)
+                .addField('Uptime', `${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds`);
+            message.channel.send({ embed: uptimeembed });
+        }
+
+    })
+    /*-----------------------------------------------------------------------------------------------------------------------
+                SERVERS COMMANDS
+    -------------------------------------------------------------------------------------------------------------------------*/
 bot.on("message", async(message) => {
     const sstatus = (await db.ref(`bot/`).child('sstatus').once('value')).val();
     bot.user.setPresence({ status: `streaming`, game: { name: `${sstatus}`, type: `STREAMING`, url: `https://www.twitch.tv/pardeepsingh12365` } });
@@ -358,12 +358,17 @@ bot.on("message", async(message) => {
     const gprefix = (await db
         .ref(`servers/${message.guild.id}`)
         .child('guildprefix')
-        .once('value')).val();
+		.once('value')).val();
+	if (!gprefix || gprefix === null) {
+		cprefix = prefix
+	} else {
+		cprefix = gprefix
+	}
 
-    if (!message.content.startsWith(gprefix) && !message.content.startsWith(prefix)) return undefined;
-    if (message.content.startsWith(gprefix)) {
-        args = message.content.substring(gprefix.length + 1).split();
-        comarg = message.content.slice(gprefix.length).trim().split(/ +/g);
+    if (!message.content.startsWith(cprefix)) return undefined;
+    if (message.content.startsWith(cprefix)) {
+        args = message.content.substring(cprefix.length + 1).split();
+        comarg = message.content.slice(cprefix.length).trim().split(/ +/g);
     } else {
         args = message.content.substring(prefix.length + 1).split();
         comarg = message.content.slice(prefix.length).trim().split(/ +/g);
@@ -753,7 +758,7 @@ bot.on("message", async(message) => {
         } else if (c === "use-customimage") {
             if (message.author.id !== botowner && !message.member.hasPermission("MANAGE_GUILD")) return message.channel.send(`U don't have permission to do that`);
             if (wchannelid === null) return message.channel.send(`welcome channel not set please set the channel first with \`\`${prefix}welcome set-channel <#channel>\`\``);
-            if(wcustomimageurl === null) return message.channel.send(`not find any image please first set a custom image with commands \`\`${prefix}welcome set-customimage https://welcomecustomimage.jpg\`\` only .jpg or .png valid`)
+            if (wcustomimageurl === null) return message.channel.send(`not find any image please first set a custom image with commands \`\`${prefix}welcome set-customimage https://welcomecustomimage.jpg\`\` only .jpg or .png valid`)
             if (!wcustomimageonoff) {
                 firebase.database().ref('servers/' + message.guild.id).update({
                     wcustomimageonoff: "on"
@@ -827,7 +832,7 @@ bot.on("message", async(message) => {
                 message.channel.send(err + "\n\n\n");
             });
             message.channel.send(`leave message set successfully \n${arg2}`)
-        }else if (c === "set-customimage") {
+        } else if (c === "set-customimage") {
             if (message.author.id !== botowner && !message.member.hasPermission("MANAGE_GUILD")) return message.channel.send(`U don't have permission to do that`);
             if (wchannelid === null) return message.channel.send(`welcome channel not set please set the channel first with \`\`${prefix}welcome set-channel <#channel>\`\``);
             let arg2 = arg.substring(c.length)
