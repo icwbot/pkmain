@@ -107,6 +107,13 @@ bot.on('message', async(message) => {
             });
             message.channel.send(`prefix updated ${arg} for ${message.guild.name}`);
         }
+        const cmd = ["help", "play"]
+
+        if (command === cmd) {
+            if (gprefix) {
+                return message.channel.send(`there is a custom prefix found for this server plz take a command \nprefix is ${gprefix} for this server`)
+            }
+        }
     }
 });
 
