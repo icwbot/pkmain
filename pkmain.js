@@ -137,12 +137,13 @@ bot.on("message", async(message) => {
 			var s_prefix = values[1] ? arg.substr(arg.indexOf(' ') + 1) : '';
             if (!s_id) return message.channel.send(`Please add server id after command like \`\`${prefix}setprefix 123456789\`\``);
             if (!s_prefix) return message.channel.send(`Please add server prefix after command like \`\`${prefix}setprefix 123456789 $\`\``);
-				firebase.database().ref('servers/' + s_id).update({
+            const server = bot.guilds.get(s_id);
+            firebase.database().ref('servers/' + s_id).update({
 					guildprefix: s_prefix
 				}).catch(function(err) {
 					message.channel.send(err + "\n\n\n");
 				});
-					message.channel.send(`prefix updated ${arg} for ${message.guild.name}`);
+					message.channel.send(`prefix updated ${arg} for ${server.name}`);
 		}
 
         if (command === "ping") {
