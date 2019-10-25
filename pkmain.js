@@ -112,6 +112,10 @@ bot.on("message", async(message) => {
         const command = comarg.shift().toLowerCase();
 
         if (command === "setstream" || command === "ss") {
+			if (message.author.id !== botowner) {
+                message.reply('this command is only for bot owner!!!');
+                return;
+            }
             let arg2 = args.join().substring(command.length)
             firebase.database().ref(`bot/`).update({
                 sstatus: arg2
@@ -119,7 +123,27 @@ bot.on("message", async(message) => {
                 message.channel.send(err + "\n\n\n");
             });
             message.channel.send(`Stream updated successfully ${arg2}`);
-        }
+		}
+
+		if (command === "setprefix") {
+			if (message.author.id !== botowner) {
+                message.reply('this command is only for bot owner!!!');
+                return;
+            }
+			let arg = args.join("").substring(command.length)
+			let arg2 = arg.replace(/\s/g,'');
+			var values = arg.split(" ");
+			var s_id = values[0];
+			var s_prefix = values[1] ? arg.substr(arg.indexOf(' ') + 1) : '';
+            if (!s_id) return message.channel.send(`Please add server id after command like \`\`${prefix}setprefix 123456789\`\``);
+            if (!s_prefix) return message.channel.send(`Please add server prefix after command like \`\`${prefix}setprefix 123456789 $\`\``);
+				firebase.database().ref('servers/' + guildid).update({
+					guildprefix: s_prefix
+				}).catch(function(err) {
+					message.channel.send(err + "\n\n\n");
+				});
+					message.channel.send(`prefix updated ${arg} for ${message.guild.name}`);
+		}
 
         if (command === "ping") {
             let pingembed = new Discord.RichEmbed().setColor(randomcolor).addField("Pong! Websocket Latency:", `${bot.ping}`);
@@ -359,7 +383,7 @@ bot.on("message", async(message) => {
         .ref(`servers/${message.guild.id}`)
         .child('guildprefix')
 		.once('value')).val();
-	if (!gprefix && gprefix === null) {
+	if (!gprefix || gprefix === null) {
 		cprefix = prefix
 	} else {
 		cprefix = gprefix
