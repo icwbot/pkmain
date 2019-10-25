@@ -535,7 +535,7 @@ bot.on("message", async(message) => {
 
     if (command == "gsearch" || command === "google" || command === "g") {
         if (message.author.id !== botowner) {
-            /*message.reply('this command is only for bot owner!!!');*/
+            message.reply('this command is only for bot owner!!!');
             return;
         }
         let input = message.content.substring(command.length + prefix.length + 1);
@@ -631,11 +631,12 @@ bot.on("message", async(message) => {
 
     if (command === "setprefix") {
         if (message.author.id !== botowner && !message.member.hasPermission("MANAGE_GUILD")) return message.channel.send(`U don't have permission to do that`);
-        let arg = args.join("").substring(command.length)
+		let arg = args.join("").substring(command.length)
+		let args2 = arg.replace(/\s/g,'');
         if (!arg) return message.channel.send(`Please add a prefix after command like \`\`${prefix}setprefix &\`\``);
         firebase.database().ref('servers/' + message.guild.id).update({
             guildname: message.guild.name,
-            guildprefix: arg
+            guildprefix: arg2
         }).catch(function(err) {
             message.channel.send(err + "\n\n\n");
         });
