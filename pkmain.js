@@ -107,7 +107,7 @@ bot.on('message', async(message) => {
             });
             message.channel.send(`prefix updated ${arg} for ${message.guild.name}`);
         }
-        const cmd = ["ping", "invite", "botinfo", "uptime", "weather", "say", "serverinfo", "welcome", "purge", "warn", "kick", "ban",
+        const cmd = ["help", "ping", "invite", "botinfo", "uptime", "weather", "say", "serverinfo", "welcome", "purge", "warn", "kick", "ban",
                     "play", "pause", "resume", "volume", "skip", "prev", "stop", "queue", "song", "random", "bugreport", "google"]
 
         if (cmd.includes(command)) {
