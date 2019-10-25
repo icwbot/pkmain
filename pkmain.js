@@ -68,20 +68,9 @@ bot.login(process.env.BOTTOKEN).then(function() {
     bot.channels.get(botlogchannel).send("bot logged in");
 }).catch(console.log);
 
-
-fs.readFile("save.json", function(err, data) {
-    if (err) {
-        if (err.code === "ENOENT") {
-            console.log("save.json does not exist");
-            fs.writeFile("save.json", "{}", "utf8", function(err) {
-                if (err) throw err;
-                console.log("save.json created");
-            });
-        } else {
-            throw err;
-        }
-    }
-});
+/*---------------------------------------------------------------------------------------------------------------
+            CHAT BOT
+---------------------------------------------------------------------------------------------------------------*/
 
 bot.on('message', async(message) => {
     if (message.author.bot) return undefined;
@@ -292,7 +281,7 @@ bot.on("message", async(message) => {
 
         if (command == "gsearch" || command === "google" || command === "g") {
             if (message.author.id !== botowner) {
-                /*message.reply('this command is only for bot owner!!!');*/
+                message.reply('this command is only for bot owner!!!');
                 return;
             }
             let input = message.content.substring(command.length + prefix.length + 1);
@@ -938,6 +927,7 @@ bot.on("message", async(message) => {
             \n:black_square_button: | \`\`use-jointext\`\` switch of user join text
             \n:black_square_button: | \`\`use-leavetext\`\` switch of user leave text
             \n:black_square_button: | \`\`use-customimage\`\` switch of custom welcome image
+            \n:black_square_button: | \`\`use-userinfo\`\` switch of userinfo (if user is owner of 200+ members server)
             \n:black_square_button: | \`\`set-customimage\`\` set custom image for welcome
             \n:black_square_button: | \`\`set-joinmessage <message>\`\` set join message for welcome
             \n:black_square_button: | \`\`set-leavemessage <message>\`\` set leave message
@@ -950,7 +940,7 @@ bot.on("message", async(message) => {
             \n:black_square_button: | welcome userinfo text switch is **${wuinfoonoff}**
             \n:black_square_button: | welcome image switch is **${wimageonoff}**
             `)
-        } /*\n:black_square_button: | \`\`use-userinfo\`\` switch of userinfo (if user is owner of 200+ members server)*/
+        }
     }
 
     if (command === "warn") {
