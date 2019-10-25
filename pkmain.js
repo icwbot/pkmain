@@ -632,7 +632,7 @@ bot.on("message", async(message) => {
     if (command === "setprefix") {
         if (message.author.id !== botowner && !message.member.hasPermission("MANAGE_GUILD")) return message.channel.send(`U don't have permission to do that`);
 		let arg = args.join("").substring(command.length)
-		let args2 = arg.replace(/\s/g,'');
+		let arg2 = arg.replace(/\s/g,'');
         if (!arg) return message.channel.send(`Please add a prefix after command like \`\`${prefix}setprefix &\`\``);
         firebase.database().ref('servers/' + message.guild.id).update({
             guildname: message.guild.name,
