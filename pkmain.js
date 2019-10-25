@@ -81,7 +81,7 @@ bot.on('message', async(message) => {
         });
         return;
     }
-    const gprefix = (await db.ref(`servers/${message.guild.id}`).child('guildprefix').once('value')).val();
+    /*const gprefix = (await db.ref(`servers/${message.guild.id}`).child('guildprefix').once('value')).val();
     args = message.content.substring(prefix.length + 1).split();
     comarg = message.content.slice(prefix.length).trim().split(/ +/g);
     const command = comarg.shift().toLowerCase();
@@ -107,15 +107,7 @@ bot.on('message', async(message) => {
             });
             message.channel.send(`prefix updated ${arg} for ${message.guild.name}`);
         }
-        const cmd = ["help", "ping", "invite", "botinfo", "uptime", "weather", "say", "serverinfo", "welcome", "purge", "warn", "kick", "ban",
-                    "play", "pause", "resume", "volume", "skip", "prev", "stop", "queue", "song", "random", "bugreport", "google"]
-
-        if (cmd.includes(command)) {
-            if (gprefix && gprefix === prefix) {
-                return message.channel.send(`there is a custom prefix for this server plz use that prefix \nprefix is ${gprefix} for this server`)
-            }
-        }
-    }
+    }*/
 });
 
 /*----------------------------------------------------------------------------------------------------------------
