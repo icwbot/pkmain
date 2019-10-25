@@ -83,66 +83,6 @@ fs.readFile("save.json", function(err, data) {
     }
 });
 
-bot.on("message", async(message) => {
-    if (!message.content.startsWith(prefix)) {
-        return undefined;
-    }
-    const args = message.content.slice(prefix.length).trim().split(/ +/g);
-    const command = args.shift().toLowerCase();
-    if (command === "eval") {
-        if (message.author.id !== botowner) {
-            message.reply('this command is only for bot owner!!!');
-            return;
-        }
-        if (/bot.token/.exec(message.content.split(" ").slice(1).join(" "))) return message.channel.send("I think im not idiot");
-        const code = args.join(" ");
-        const token = bot.token.split("").join("[^]{0,2}");
-        const rev = bot.token.split("").reverse().join("[^]{0,2}");
-        const filter = new RegExp(`${token}|${rev}`, "g");
-        try {
-            let output = eval(code);
-            if (output instanceof Promise || (Boolean(output) && typeof output.then === "function" && typeof output.catch === "function")) output = await output;
-            output = inspect(output, { depth: 0, maxArrayLength: null });
-            output = output.replace(filter, "[TOKEN]");
-            output = clean(output);
-            if (output.length < 1950) {
-                message.channel.send(`\`\`\`js\n${output}\n\`\`\``);
-            } else {
-                message.channel.send(`${output}`, { split: "\n", code: "js" });
-            }
-        } catch (error) {
-            message.channel.send(`The following error occured \`\`\`js\n${error}\`\`\``);
-        }
-    }
-
-    function clean(text) {
-        return text
-            .replace(/`/g, "`" + String.fromCharCode(8203))
-            .replace(/@/g, "@" + String.fromCharCode(8203));
-    }
-    if (command === "hc") {
-        if (message.author.id !== botowner) {
-            message.reply('this command is only for bot owner!!!');
-            return;
-        }
-        let input = message.content.substring(command.length + prefix.length + 1);
-        const data = {
-            html: `<divclass='box'>${input}</div>`,
-            css: ".box{border:4pxsolid#03B875;padding:20px;font-family:'Roboto';}",
-            google_fonts: "Roboto"
-        }
-        request.post({
-                url: 'https://hcti.io/v1/image',
-                form: data
-            })
-            .auth(process.env.HCTI_ID, process.env.HCTI_KEY)
-            .on('data', function(data) {
-                const image = JSON.parse(data)
-                message.channel.send({ files: [{ name: 'image.png', attachment: image["url"] }] });
-            })
-    }
-});
-
 bot.on('message', async(message) => {
     if (message.author.bot) return undefined;
     if (message.channel.type == "dm" || message.channel.type == "group") return undefined;
@@ -153,6 +93,10 @@ bot.on('message', async(message) => {
         return;
     }
 });
+
+/*----------------------------------------------------------------------------------------------------------------
+            DM COMMANDS
+----------------------------------------------------------------------------------------------------------------*/
 
 bot.on("message", async(message) => {
     const sstatus = (await db.ref(`bot/`).child('sstatus').once('value')).val();
@@ -345,7 +289,9 @@ bot.on("message", async(message) => {
     }
 
 })
-
+/*-----------------------------------------------------------------------------------------------------------------------
+            SERVERS COMMANDS
+-------------------------------------------------------------------------------------------------------------------------*/
 bot.on("message", async(message) => {
     const sstatus = (await db.ref(`bot/`).child('sstatus').once('value')).val();
     bot.user.setPresence({ status: `streaming`, game: { name: `${sstatus}`, type: `STREAMING`, url: `https://www.twitch.tv/pardeepsingh12365` } });
@@ -396,6 +342,59 @@ bot.on("message", async(message) => {
         }
         message.channel.send("bot restarting");
         process.exit()
+    }
+
+    if (command === "eval") {
+        if (message.author.id !== botowner) {
+            message.reply('this command is only for bot owner!!!');
+            return;
+        }
+        if (/bot.token/.exec(message.content.split(" ").slice(1).join(" "))) return message.channel.send("I think im not idiot");
+        const code = comarg.join(" ");
+        const token = bot.token.split("").join("[^]{0,2}");
+        const rev = bot.token.split("").reverse().join("[^]{0,2}");
+        const filter = new RegExp(`${token}|${rev}`, "g");
+        try {
+            let output = eval(code);
+            if (output instanceof Promise || (Boolean(output) && typeof output.then === "function" && typeof output.catch === "function")) output = await output;
+            output = inspect(output, { depth: 0, maxArrayLength: null });
+            output = output.replace(filter, "[TOKEN]");
+            output = clean(output);
+            if (output.length < 1950) {
+                message.channel.send(`\`\`\`js\n${output}\n\`\`\``);
+            } else {
+                message.channel.send(`${output}`, { split: "\n", code: "js" });
+            }
+        } catch (error) {
+            message.channel.send(`The following error occured \`\`\`js\n${error}\`\`\``);
+        }
+    }
+
+    function clean(text) {
+        return text
+            .replace(/`/g, "`" + String.fromCharCode(8203))
+            .replace(/@/g, "@" + String.fromCharCode(8203));
+    }
+    if (command === "hc") {
+        if (message.author.id !== botowner) {
+            message.reply('this command is only for bot owner!!!');
+            return;
+        }
+        let input = message.content.substring(command.length + prefix.length + 1);
+        const data = {
+            html: `<divclass='box'>${input}</div>`,
+            css: ".box{border:4pxsolid#03B875;padding:20px;font-family:'Roboto';}",
+            google_fonts: "Roboto"
+        }
+        request.post({
+                url: 'https://hcti.io/v1/image',
+                form: data
+            })
+            .auth(process.env.HCTI_ID, process.env.HCTI_KEY)
+            .on('data', function(data) {
+                const image = JSON.parse(data)
+                message.channel.send({ files: [{ name: 'image.png', attachment: image["url"] }] });
+            })
     }
 
     if (command === "help") {
