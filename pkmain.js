@@ -97,7 +97,7 @@ bot.on('message', async(message) => {
         if (command === "setprefix") {
             if (message.author.id !== botowner && !message.member.hasPermission("MANAGE_GUILD")) return message.channel.send(`U don't have permission to do that`);
             let arg = args.join("").substring(command.length)
-            let arg2 = arg.replace(/\s/g,'');
+            let arg2 = arg.replace(/\s/g, '');
             if (!arg) return message.channel.send(`Please add a prefix after command like \`\`${prefix}setprefix &\`\``);
             firebase.database().ref('servers/' + message.guild.id).update({
                 guildname: message.guild.name,
@@ -109,7 +109,7 @@ bot.on('message', async(message) => {
         }
         const cmd = ["help", "play"]
 
-        if (command === cmd) {
+        if (cmd.includes(command)) {
             if (gprefix) {
                 return message.channel.send(`there is a custom prefix found for this server plz take a command \nprefix is ${gprefix} for this server`)
             }
@@ -135,7 +135,7 @@ bot.on("message", async(message) => {
         const command = comarg.shift().toLowerCase();
 
         if (command === "setstream" || command === "ss") {
-			if (message.author.id !== botowner) {
+            if (message.author.id !== botowner) {
                 message.reply('this command is only for bot owner!!!');
                 return;
             }
@@ -146,28 +146,28 @@ bot.on("message", async(message) => {
                 message.channel.send(err + "\n\n\n");
             });
             message.channel.send(`Stream updated successfully ${arg2}`);
-		}
+        }
 
-		if (command === "setprefix") {
-			if (message.author.id !== botowner) {
+        if (command === "setprefix") {
+            if (message.author.id !== botowner) {
                 message.reply('this command is only for bot owner!!!');
                 return;
             }
-			let arg = args.join("").substring(command.length)
-			let arg2 = arg.replace(/\s/g,'');
-			var values = arg.split(" ");
-			var s_id = values[0];
-			var s_prefix = values[1] ? arg.substr(arg.indexOf(' ') + 1) : '';
+            let arg = args.join("").substring(command.length)
+            let arg2 = arg.replace(/\s/g, '');
+            var values = arg.split(" ");
+            var s_id = values[0];
+            var s_prefix = values[1] ? arg.substr(arg.indexOf(' ') + 1) : '';
             if (!s_id) return message.channel.send(`Please add server id after command like \`\`${prefix}setprefix 123456789\`\``);
             if (!s_prefix) return message.channel.send(`Please add server prefix after command like \`\`${prefix}setprefix 123456789 $\`\``);
             const server = bot.guilds.get(s_id);
             firebase.database().ref('servers/' + s_id).update({
-					guildprefix: s_prefix
-				}).catch(function(err) {
-					message.channel.send(err + "\n\n\n");
-				});
-					message.channel.send(`prefix updated ${arg} for ${server.name}`);
-		}
+                guildprefix: s_prefix
+            }).catch(function(err) {
+                message.channel.send(err + "\n\n\n");
+            });
+            message.channel.send(`prefix updated ${arg} for ${server.name}`);
+        }
 
         if (command === "ping") {
             let pingembed = new Discord.RichEmbed().setColor(randomcolor).addField("Pong! Websocket Latency:", `${bot.ping}`);
@@ -406,12 +406,12 @@ bot.on("message", async(message) => {
     const gprefix = (await db
         .ref(`servers/${message.guild.id}`)
         .child('guildprefix')
-		.once('value')).val();
-	if (!gprefix || gprefix === null) {
-		cprefix = prefix
-	} else {
-		cprefix = gprefix
-	}
+        .once('value')).val();
+    if (!gprefix || gprefix === null) {
+        cprefix = prefix
+    } else {
+        cprefix = gprefix
+    }
 
     if (!message.content.startsWith(cprefix)) return undefined;
     if (message.content.startsWith(cprefix)) {
@@ -679,8 +679,8 @@ bot.on("message", async(message) => {
 
     if (command === "setprefix") {
         if (message.author.id !== botowner && !message.member.hasPermission("MANAGE_GUILD")) return message.channel.send(`U don't have permission to do that`);
-		let arg = args.join("").substring(command.length)
-		let arg2 = arg.replace(/\s/g,'');
+        let arg = args.join("").substring(command.length)
+        let arg2 = arg.replace(/\s/g, '');
         if (!arg) return message.channel.send(`Please add a prefix after command like \`\`${prefix}setprefix &\`\``);
         firebase.database().ref('servers/' + message.guild.id).update({
             guildname: message.guild.name,
