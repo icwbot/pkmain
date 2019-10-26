@@ -81,33 +81,17 @@ bot.on('message', async(message) => {
         });
         return;
     }
-    /*const gprefix = (await db.ref(`servers/${message.guild.id}`).child('guildprefix').once('value')).val();
     args = message.content.substring(prefix.length + 1).split();
     comarg = message.content.slice(prefix.length).trim().split(/ +/g);
     const command = comarg.shift().toLowerCase();
-    if (message.content.startsWith(prefix)) {
-        if (command === "prefix") {
-            if (gprefix === null) {
-                return message.channel.send(`there is custom prefix not found for this server plz take a command \`\`${prefix}setprefix\`\` if you want to set the server custom prefix`)
-            } else {
-                message.channel.send(`The current prefix is ${gprefix} of ${message.guild.name}`);
-            }
-        }
-
-        if (command === "setprefix") {
-            if (message.author.id !== botowner && !message.member.hasPermission("MANAGE_GUILD")) return message.channel.send(`U don't have permission to do that`);
-            let arg = args.join("").substring(command.length)
-            let arg2 = arg.replace(/\s/g, '');
-            if (!arg) return message.channel.send(`Please add a prefix after command like \`\`${prefix}setprefix &\`\``);
-            firebase.database().ref('servers/' + message.guild.id).update({
-                guildname: message.guild.name,
-                guildprefix: arg2
-            }).catch(function(err) {
+    if (command === "delprefix" || command === "deleteprefix") {
+        if (message.author.id !== botowner && !message.member.hasPermission("MANAGE_GUILD")) return message.channel.send(`U don't have permission to do that`);
+            firebase.database().ref('servers/'+ message.guild.id + '/guildprefix').remove()
+            .catch(function(err) {
                 message.channel.send(err + "\n\n\n");
             });
-            message.channel.send(`prefix updated ${arg} for ${message.guild.name}`);
-        }
-    }*/
+            message.channel.send(`prefix removed successfully for ${message.guild.name}\nnow default prefix is ${prefix}`);
+    }
 });
 
 /*----------------------------------------------------------------------------------------------------------------
@@ -126,55 +110,6 @@ bot.on("message", async(message) => {
         args = message.content.substring(prefix.length + 1).split();
         comarg = message.content.slice(prefix.length).trim().split(/ +/g);
         const command = comarg.shift().toLowerCase();
-
-        if (command === "setstream" || command === "ss") {
-            if (message.author.id !== botowner) {
-                message.reply('this command is only for bot owner!!!');
-                return;
-            }
-            let arg2 = args.join().substring(command.length)
-            firebase.database().ref(`bot/`).update({
-                sstatus: arg2
-            }).catch(function(err) {
-                message.channel.send(err + "\n\n\n");
-            });
-            message.channel.send(`Stream updated successfully ${arg2}`);
-        }
-
-        if (command === "setprefix") {
-            if (message.author.id !== botowner) {
-                message.reply('this command is only for bot owner!!!');
-                return;
-            }
-            let arg = args.join("").substring(command.length)
-            let arg2 = arg.replace(/\s/g, '');
-            var values = arg.split(" ");
-            var s_id = values[0];
-            var s_prefix = values[1] ? arg.substr(arg.indexOf(' ') + 1) : '';
-            if (!s_id) return message.channel.send(`Please add server id after command like \`\`${prefix}setprefix 123456789\`\``);
-            if (!s_prefix) return message.channel.send(`Please add server prefix after command like \`\`${prefix}setprefix 123456789 $\`\``);
-            const server = bot.guilds.get(s_id);
-            firebase.database().ref('servers/' + s_id).update({
-                guildprefix: s_prefix
-            }).catch(function(err) {
-                message.channel.send(err + "\n\n\n");
-            });
-            message.channel.send(`prefix updated ${arg} for ${server.name}`);
-        }
-
-        if (command === "ping") {
-            let pingembed = new Discord.RichEmbed().setColor(randomcolor).addField("Pong! Websocket Latency:", `${bot.ping}`);
-            message.channel.send({ embed: pingembed })
-        }
-
-        if (command === "restart") {
-            if (message.author.id !== botowner) {
-                message.reply('this command is only for bot owner!!!');
-                return;
-            }
-            message.channel.send("bot restarting");
-            process.exit()
-        }
 
         if (command === "eval") {
             if (message.author.id !== botowner) {
@@ -207,6 +142,60 @@ bot.on("message", async(message) => {
                 .replace(/`/g, "`" + String.fromCharCode(8203))
                 .replace(/@/g, "@" + String.fromCharCode(8203));
         }
+
+        if (command === "setstream" || command === "ss") {
+            if (message.author.id !== botowner) {
+                message.reply('this command is only for bot owner!!!');
+                return;
+            }
+            let arg2 = args.join().substring(command.length)
+            firebase.database().ref(`bot/`).update({
+                sstatus: arg2
+            }).catch(function(err) {
+                message.channel.send(err + "\n\n\n");
+            });
+            message.channel.send(`Stream updated successfully ${arg2}`);
+        }
+
+        if (command === "setprefix") {
+            if (message.author.id !== botowner) {
+                message.reply('this command is only for bot owner!!!');
+                return;
+            }
+            let arg = args.join("").substring(command.length)
+            let arg2 = arg.replace(/\s/g, '');
+            var values = arg.split(" ");
+            var s_id = values[0];
+            var s_prefix = values[1] ? arg.substr(arg.indexOf(' ') + 1) : '';
+            if (!s_id) return message.channel.send(`Please add server id after command like \`\`${prefix}setprefix 123456789\`\``);
+            if (!s_prefix) return message.channel.send(`Please add server prefix after command like \`\`${prefix}setprefix 123456789 $\`\``);
+            const server = bot.guilds.get(s_id);
+            if (arg2 === prefix) {
+                firebase.database().ref('servers/'+ server.id + '/guildprefix').remove()
+                .catch(function(err) {
+                    message.channel.send(err + "\n\n\n");
+                });
+                message.channel.send(`prefix updated ${arg} for ${server.name}`);
+            } else {
+                firebase.database().ref('servers/' + server.id).update({
+                    guildname: server.name,
+                    guildprefix: arg2
+                }).catch(function(err) {
+                    message.channel.send(err + "\n\n\n");
+                });
+                message.channel.send(`prefix updated ${arg} for ${server.name}`);
+            }
+        }
+
+        if (command === "restart") {
+            if (message.author.id !== botowner) {
+                message.reply('this command is only for bot owner!!!');
+                return;
+            }
+            message.channel.send("bot restarting");
+            process.exit()
+        }
+
         if (command === "hc") {
             if (message.author.id !== botowner) {
                 message.reply('this command is only for bot owner!!!');
@@ -229,13 +218,17 @@ bot.on("message", async(message) => {
                 })
         }
 
+        if (command === "ping") {
+            let pingembed = new Discord.RichEmbed().setColor(randomcolor).addField("Pong! Websocket Latency:", `${bot.ping}`);
+            message.channel.send({ embed: pingembed })
+        }
 
         if (command === "help") {
             let helpembed = new Discord.RichEmbed()
                 .setColor(randomcolor)
                 .setAuthor("Hi " + message.author.username.toString(), message.author.displayAvatarURL)
                 .setDescription(`ICW help Section \nDefault Prefix = ${prefix} \nvolume command is for all users \nmore commands coming soon`)
-                .addField("Custom Prefix", `setprefix - (for set the custom prefix for server) \nprefix - (for check the server prefix)`)
+                .addField("Custom Prefix", `setprefix - (for set the custom prefix for server) \nprefix - (for check the server prefix) \ndeleteprefix - (for delete prefix if you forget your prefix)\`\`$delprefix\`\``)
                 .addField("Bot info commands", `ping - (bot ping) \ninvite - (bot invite link)\nbotinfo - (info about the bot)\`\`info , botstatus\`\` \nuptime - (uptime of the bot)`)
                 .addField("until commands", `cleverbot - (talk with bot with mention or icw \`\`example - icw hi\`\`) \`\`icw\`\` \nweather - (check your city weather) \nsay - (bot saying your message) \nserverinfo - (info about server)`)
                 .addField("Modration command", ` welcome - (welcoming the member) \n purge (delete multiple messages) \`\`delete\`\`, \`\`prune\`\` \n warn - (for warning a member) \n kick - (for kick a member) \n ban - (for ban a member)`)
@@ -502,7 +495,7 @@ bot.on("message", async(message) => {
             .setColor(randomcolor)
             .setAuthor("Hi " + message.author.username.toString(), message.author.displayAvatarURL)
             .setDescription(`ICW help Section \nDefault Prefix = ${prefix} \nvolume command is for all users \nmore commands coming soon`)
-            .addField("Custom Prefix", `setprefix - (for set the custom prefix for server) \nprefix - (for check the server prefix)`)
+            .addField("Custom Prefix", `setprefix - (for set the custom prefix for server) \nprefix - (for check the server prefix) \ndeleteprefix - (for delete prefix if you forget your prefix)\`\`$delprefix\`\``)
             .addField("Bot info commands", `ping - (bot ping) \ninvite - (bot invite link)\nbotinfo - (info about the bot)\`\`info , botstatus\`\` \nuptime - (uptime of the bot)`)
             .addField("until commands", `cleverbot - (talk with bot with mention or icw \`\`example - icw hi\`\`) \`\`icw\`\` \nweather - (check your city weather) \nsay - (bot saying your message) \nserverinfo - (info about server)`)
             .addField("Modration command", ` welcome - (welcoming the member) \n purge (delete multiple messages) \`\`delete\`\`, \`\`prune\`\` \n warn - (for warning a member) \n kick - (for kick a member) \n ban - (for ban a member)`)
