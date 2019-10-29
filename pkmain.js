@@ -943,7 +943,7 @@ bot.on("message", async(message) => {
             if (wchannelid === null) { wchannel = "Not Set" } else { wchannel = `<#${wchannelid}>` }
             let welcomeembed = new Discord.RichEmbed()
             .setAuthor("ICW WELCOME CONTROL",`${icwflashlogo}`)
-            .setDescription(`:black_square_button: | \`\`on/off\`\` welcome switch
+            .setDescription(`\n:black_square_button: | \`\`on/off\`\` welcome switch
             \n:black_square_button: | \`\`use-image\`\` switch of welcome image
             \n:black_square_button: | \`\`use-jointext\`\` switch of user join text
             \n:black_square_button: | \`\`use-leavetext\`\` switch of user leave text
