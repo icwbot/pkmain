@@ -943,25 +943,27 @@ bot.on("message", async(message) => {
             if (wchannelid === null) { wchannel = "Not Set" } else { wchannel = `<#${wchannelid}>` }
             let welcomeembed = new Discord.RichEmbed()
             .setAuthor(`:wave: **ICW WELCOME**`)
-            .addField(`:black_square_button: | \`\`on/off\`\` welcome switch`)
-            .addField(`:black_square_button: | \`\`use-image\`\` switch of welcome image`)
-            .addField(`:black_square_button: | \`\`use-jointext\`\` switch of user join text`)
-            .addField(`:black_square_button: | \`\`use-leavetext\`\` switch of user leave text`)
-            .addField(`:black_square_button: | \`\`use-customimage\`\` switch of custom welcome image`)
-            .addField(`:black_square_button: | \`\`use-userinfo\`\` switch of userinfo (if user is owner of 200+ members server)`)
-            .addField(`:black_square_button: | \`\`set-customimage\`\` set custom image for welcome`)
-            .addField(`:black_square_button: | \`\`set-joinmessage <message>\`\` set join message for welcome`)
-            .addField(`:black_square_button: | \`\`set-leavemessage <message>\`\` set leave message`)
-            .addField(`:black_square_button: | \`\`set-channel <#channel>\`\` set channel for welcome`)
-            .addField(`:black_square_button: | \`\`jointest <@${message.author.tag}>\`\` test the welcome`)
-            .addField(`:black_square_button: | welcome main switch is **${welcomeMstatus}**`)
-            .addField(`:black_square_button: | welcome channel is **${wchannel}**`)
-            .addField(`:black_square_button: | welcome join text switch is **${wtextonoff}**`)
-            .addField(`:black_square_button: | welcome leave text switch is **${wleavetextonoff}**`)
-            .addField(`:black_square_button: | welcome userinfo text switch is **${wuinfoonoff}**`)
-            .addField(`:black_square_button: | welcome image switch is **${wimageonoff}**`)
+            .setDescription(`:black_square_button: | \`\`on/off\`\` welcome switch
+            \n:black_square_button: | \`\`use-image\`\` switch of welcome image
+            \n:black_square_button: | \`\`use-jointext\`\` switch of user join text
+            \n:black_square_button: | \`\`use-leavetext\`\` switch of user leave text
+            \n:black_square_button: | \`\`use-customimage\`\` switch of custom welcome image
+            \n:black_square_button: | \`\`use-userinfo\`\` switch of userinfo (if user is owner of 200+ members server)
+            \n:black_square_button: | \`\`set-customimage\`\` set custom image for welcome
+            \n:black_square_button: | \`\`set-joinmessage <message>\`\` set join message for welcome
+            \n:black_square_button: | \`\`set-leavemessage <message>\`\` set leave message
+            \n:black_square_button: | \`\`set-channel <#channel>\`\` set channel for welcome
+            \n:black_square_button: | \`\`jointest @${message.author.tag}\`\` test the welcome
+            \n
+            \n:black_square_button: | welcome main switch is **${welcomeMstatus}**
+            \n:black_square_button: | welcome channel is **${wchannel}**
+            \n:black_square_button: | welcome join text switch is **${wtextonoff}**
+            \n:black_square_button: | welcome leave text switch is **${wleavetextonoff}**
+            \n:black_square_button: | welcome userinfo text switch is **${wuinfoonoff}**
+            \n:black_square_button: | welcome image switch is **${wimageonoff}**`)
             .setImage(icwflahimg)
             .setFooter("Bot Developed by: PK#1650 ", `${pkflashlogo}`)
+            .setColor(randomcolor)
             .setTimestamp();
             message.channel.send({embed: welcomeembed});
         }
