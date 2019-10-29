@@ -941,7 +941,7 @@ bot.on("message", async(message) => {
             });
         } else {
             if (wchannelid === null) { wchannel = "Not Set" } else { wchannel = `<#${wchannelid}>` }
-            let welcomeembed = new Diiscord.RichEmbed()
+            let welcomeembed = new Discord.RichEmbed()
             .setAuthor(`:wave: **ICW WELCOME**`)
             .addField(`:black_square_button: | \`\`on/off\`\` welcome switch`)
             .addField(`:black_square_button: | \`\`use-image\`\` switch of welcome image`)
