@@ -15,7 +15,14 @@ const botleavejoinchannel = "431829603741466634";
 const botrejectionschannel = "432090416834412545";
 const botowner = "264470521788366848";
 const wfortunes = ["{user} keep you`r shoes out of door", "hey {user} show your swag", "be carefull {user} is here! -_-", "{user} make the party awesome", "Hi {user} Take guitar & enjoy party", "hehe {user} are slide hide your dishes", "let's go {user} for chicken dinner"];
-const wimages = [`https://imgur.com/Z2fpFVi.png`, `https://imgur.com/G29egX4.png`, `https://imgur.com/LHdn5I8.png`, `https://imgur.com/GziAP26.png`, `https://imgur.com/GjI5Vpk.png`, `https://imgur.com/WqTnmM0.png`, `https://imgur.com/qknRCM7.png`];
+const wimages = [`https://cdn.discordapp.com/attachments/639292893307207707/639297904573546503/Z2fpFVi.jpg`,
+                `https://cdn.discordapp.com/attachments/639292893307207707/639298061016760340/G29egX4.jpg`,
+                `https://cdn.discordapp.com/attachments/639292893307207707/639298136937988097/LHdn5I8.jpg`,
+                `https://cdn.discordapp.com/attachments/639292893307207707/639298183419265025/GziAP26.jpg`,
+                `https://cdn.discordapp.com/attachments/639292893307207707/639298248099627009/GjI5Vpk.png`,
+                `https://cdn.discordapp.com/attachments/639292893307207707/639298302944215072/WqTnmM0.jpg`,
+                `https://cdn.discordapp.com/attachments/639292893307207707/639298366349508618/qknRCM7.png
+                `];
 const icwstaff = ["385099687465844736", "278587244443467777", "288961251973791744"];
 const icwlogo = "https://media.discordapp.net/attachments/406099961730564107/407455733689483265/Untitled6.png?width=300&height=300";
 const icwflahimg = "https://cdn.discordapp.com/attachments/523532054499950602/607172616905555971/fx-long.gif";
@@ -906,32 +913,32 @@ bot.on("message", async(message) => {
             } else {
                 message.channel.send(wm.replace('{user}', member.toString()).replace('{members}', member.guild.memberCount));
             }
-            Jimp.read(`https://cloud.githubusercontent.com/assets/414918/11165709/051d10b0-8b0f-11e5-864a-20ef0bada8d6.png`).then(function(mask) {
-                Jimp.read(img).then(function(image) {
-                    Jimp.read(images).then(function(image2) {
-                        Jimp.loadFont(Jimp.FONT_SANS_16_BLACK).then(function(font) {
+            Jimp.read(`https://cloud.githubusercontent.com/assets/414918/11165709/051d10b0-8b0f-11e5-864a-20ef0bada8d6.png`,(err, mask) => {
+                Jimp.read(img,(err, image) => {
+                    Jimp.read(images,(err, image2) => {
+                        Jimp.loadFont(Jimp.FONT_SANS_16_BLACK).then(font => {
                             image2.print(font, 121, 57, s);
                             image2.print(font, 103, 79, u);
                             image2.print(font, 103, 57, "to");
                             image2.print(font, 11, 101, fact2)
                             image2.print(font, 103, 4, "Welcome");
-                            Jimp.loadFont(Jimp.FONT_SANS_16_WHITE).then(function(font) {
+                            Jimp.loadFont(Jimp.FONT_SANS_16_WHITE).then(font => {
                                 image2.print(font, 120, 56, s);
                                 image2.print(font, 102, 56, "to")
                                 image2.print(font, 10, 100, fact2)
                                 image2.print(font, 102, 78, u);
                                 image2.print(font, 102, 3, "Welcome");
-                                Jimp.loadFont(Jimp.FONT_SANS_32_BLACK).then(function(font) {
+                                Jimp.loadFont(Jimp.FONT_SANS_32_BLACK).then(font => {
                                     image2.print(font, 104, 20, member.user.tag);
-                                    Jimp.loadFont(Jimp.FONT_SANS_32_WHITE).then(function(font) {
+                                    Jimp.loadFont(Jimp.FONT_SANS_32_WHITE).then(font => {
                                         image2.print(font, 102, 18, member.user.tag)
                                         image2.resize(1600, 480);
                                         image.resize(360, 360);
                                         mask.resize(360, 360);
                                         image.mask(mask, 0, 0);
-                                        image2.composite(image, 5, 5);
-                                        image2.getBuffer(Jimp.MIME_PNG,
-                                            (error, buffer) => { message.channel.send({ files: [{ name: 'welcome.png', attachment: buffer }] }); });
+                                        image2.composite(image, 5, 5)
+                                        .write(`welcome.jpg`)
+                                            message.channel.send(new Discord.Attachment(`welcome.jpg`));
                                     });
                                 });
                             });
@@ -943,7 +950,7 @@ bot.on("message", async(message) => {
             if (wchannelid === null) { wchannel = "Not Set" } else { wchannel = `<#${wchannelid}>` }
             let welcomeembed = new Discord.RichEmbed()
             .setAuthor("ICW WELCOME CONTROL",`${icwflashlogo}`)
-            .setDescription(`\n:black_square_button: | \`\`on/off\`\` welcome switch
+            .setDescription(`:black_square_button: | \`\`on/off\`\` welcome switch
             \n:black_square_button: | \`\`use-image\`\` switch of welcome image
             \n:black_square_button: | \`\`use-jointext\`\` switch of user join text
             \n:black_square_button: | \`\`use-leavetext\`\` switch of user leave text
@@ -1567,32 +1574,32 @@ bot.on('guildMemberAdd', async(member) => {
                 let u = `you are the ${member.guild.memberCount}${ord(member.guild.memberCount)} user`;
                 let s = member.guild.name;
                 let img = member.user.displayAvatarURL;
-                Jimp.read(`https://cloud.githubusercontent.com/assets/414918/11165709/051d10b0-8b0f-11e5-864a-20ef0bada8d6.png`).then(function(mask) {
-                    Jimp.read(img).then(function(image) {
-                        Jimp.read(images).then(function(image2) {
-                            Jimp.loadFont(Jimp.FONT_SANS_16_BLACK).then(function(font) {
+                Jimp.read(`https://cloud.githubusercontent.com/assets/414918/11165709/051d10b0-8b0f-11e5-864a-20ef0bada8d6.png`,(err, mask) => {
+                    Jimp.read(img,(err, image) => {
+                        Jimp.read(images,(err, image2) => {
+                            Jimp.loadFont(Jimp.FONT_SANS_16_BLACK).then(font => {
                                 image2.print(font, 121, 57, s);
                                 image2.print(font, 103, 79, u);
                                 image2.print(font, 103, 57, "to");
                                 image2.print(font, 11, 101, fact2)
                                 image2.print(font, 103, 4, "Welcome");
-                                Jimp.loadFont(Jimp.FONT_SANS_16_WHITE).then(function(font) {
+                                Jimp.loadFont(Jimp.FONT_SANS_16_WHITE).then(font => {
                                     image2.print(font, 120, 56, s);
                                     image2.print(font, 102, 56, "to")
                                     image2.print(font, 10, 100, fact2)
                                     image2.print(font, 102, 78, u);
                                     image2.print(font, 102, 3, "Welcome");
-                                    Jimp.loadFont(Jimp.FONT_SANS_32_BLACK).then(function(font) {
+                                    Jimp.loadFont(Jimp.FONT_SANS_32_BLACK).then(font => {
                                         image2.print(font, 104, 20, member.user.tag);
-                                        Jimp.loadFont(Jimp.FONT_SANS_32_WHITE).then(function(font) {
+                                        Jimp.loadFont(Jimp.FONT_SANS_32_WHITE).then(font => {
                                             image2.print(font, 102, 18, member.user.tag)
                                             image2.resize(1600, 480);
                                             image.resize(360, 360);
                                             mask.resize(360, 360);
                                             image.mask(mask, 0, 0);
-                                            image2.composite(image, 5, 5);
-                                            image2.getBuffer(Jimp.MIME_PNG,
-                                                (error, buffer) => { member.guild.channels.get(wc.toString()).send({ files: [{ name: 'welcome.png', attachment: buffer }] }); });
+                                            image2.composite(image, 5, 5)
+                                            .write(`welcome.jpg`)
+                                            member.guild.channels.get(wc.toString()).send(new Discord.Attachment(`welcome.jpg`));
                                         });
                                     });
                                 });
@@ -1604,32 +1611,32 @@ bot.on('guildMemberAdd', async(member) => {
                 let u = `you are the ${member.guild.memberCount}${ord(member.guild.memberCount)} user`;
                 let s = member.guild.name;
                 let img = member.user.displayAvatarURL;
-                Jimp.read(`https://cloud.githubusercontent.com/assets/414918/11165709/051d10b0-8b0f-11e5-864a-20ef0bada8d6.png`).then(function(mask) {
-                    Jimp.read(img).then(function(image) {
-                        Jimp.read(wcustomimageurl).then(function(image2) {
-                            Jimp.loadFont(Jimp.FONT_SANS_16_BLACK).then(function(font) {
+                Jimp.read(`https://cloud.githubusercontent.com/assets/414918/11165709/051d10b0-8b0f-11e5-864a-20ef0bada8d6.png`,(err, mask) => {
+                    Jimp.read(img,(err, image) => {
+                        Jimp.read(wcustomimageurl,(err, image2) => {
+                            Jimp.loadFont(Jimp.FONT_SANS_16_BLACK).then(font => {
                                 image2.print(font, 121, 57, s);
                                 image2.print(font, 103, 79, u);
                                 image2.print(font, 103, 57, "to");
                                 image2.print(font, 11, 101, fact2)
                                 image2.print(font, 103, 4, "Welcome");
-                                Jimp.loadFont(Jimp.FONT_SANS_16_WHITE).then(function(font) {
+                                Jimp.loadFont(Jimp.FONT_SANS_16_WHITE).then(font => {
                                     image2.print(font, 120, 56, s);
                                     image2.print(font, 102, 56, "to")
                                     image2.print(font, 10, 100, fact2)
                                     image2.print(font, 102, 78, u);
                                     image2.print(font, 102, 3, "Welcome");
-                                    Jimp.loadFont(Jimp.FONT_SANS_32_BLACK).then(function(font) {
+                                    Jimp.loadFont(Jimp.FONT_SANS_32_BLACK).then(font => {
                                         image2.print(font, 104, 20, member.user.tag);
-                                        Jimp.loadFont(Jimp.FONT_SANS_32_WHITE).then(function(font) {
+                                        Jimp.loadFont(Jimp.FONT_SANS_32_WHITE).then(font => {
                                             image2.print(font, 102, 18, member.user.tag)
                                             image2.resize(1600, 480);
                                             image.resize(360, 360);
                                             mask.resize(360, 360);
                                             image.mask(mask, 0, 0);
-                                            image2.composite(image, 5, 5);
-                                            image2.getBuffer(Jimp.MIME_PNG,
-                                                (error, buffer) => { member.guild.channels.get(wc.toString()).send({ files: [{ name: 'welcome.png', attachment: buffer }] }); });
+                                            image2.composite(image, 5, 5)
+                                            .write(`welcome.jpg`)
+                                            member.guild.channels.get(wc.toString()).send(new Discord.Attachment(`welcome.jpg`));
                                         });
                                     });
                                 });
