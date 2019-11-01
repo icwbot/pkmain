@@ -99,6 +99,18 @@ bot.on('message', async(message) => {
             });
             message.channel.send(`prefix removed successfully for ${message.guild.name}\nnow default prefix is ${prefix}`);
     }
+
+    const mentionuser = message.mentions.members.first();
+    if (!mentionuser) return undefined;
+    const brbstatus = (await db.ref(`users/${mentionuser.user.id}`).child('brbmessage').once('value')).val();
+    if (brbstatus === null || !brbstatus) return undefined;
+    if (mentionuser.presence.status === 'offline') {
+        message.channel.send(`hey <@${message.author.id}> <@${mentionuser.user.id}> is ${brbstatus}`)
+    }
+    else {
+        return undefined;
+    }
+
 });
 
 /*----------------------------------------------------------------------------------------------------------------
@@ -435,6 +447,29 @@ bot.on("message", async(message) => {
         message.channel.send({ embed: pingembed })
     }
 
+    if (command === "brb") {
+        let arg2 = args.join("").substring(command.length);
+        const brbstatus = (await db.ref(`users/${message.author.id}`).child('brbmessage').once('value')).val();
+        if (!arg2) {
+            if (brbstatus === null || !brbstatus) {
+                message.channel.send(`you have no offline status message for clear \nif you want to set then add a message after command \nlike- \`\`brb im busy\`\``)
+            } else {
+                firebase.database().ref('users/'+ message.author.id + '/brbmessage').remove()
+                .catch(function(err) {
+                    message.channel.send(err + "\n\n\n");
+                });
+                message.channel.send(`offline status is clear`)
+            }
+        } else {
+            firebase.database().ref('users/' + message.author.id).update({
+                brbmessage: arg2
+            }).catch(function(err) {
+                message.channel.send(err + "\n\n\n");
+            });
+            message.channel.send(`offline status set: \`\`${arg2}\`\` \nif you want to clear offline status use only \`\`brb\`\``);
+        }
+    }
+
     if (command === "restart") {
         if (message.author.id !== botowner) {
             message.reply('this command is only for bot owner!!!');
@@ -443,7 +478,6 @@ bot.on("message", async(message) => {
         message.channel.send("bot restarting");
         process.exit()
     }
-
     if (command === "eval") {
         if (message.author.id !== botowner) {
             message.reply('this command is only for bot owner!!!');
