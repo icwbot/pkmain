@@ -14,7 +14,7 @@ const boterrorchannel = "420955154695585792";
 const botleavejoinchannel = "431829603741466634";
 const botrejectionschannel = "432090416834412545";
 const botowner = "264470521788366848";
-const wfortunes = ["{user} keep you`r shoes out of door", "hey {user} show your swag", "be carefull {user} is here! -_-", "{user} make the party awesome", "Hi {user} Take guitar & enjoy party", "hehe {user} are slide hide your dishes", "let's go {user} for chicken dinner"];
+const wfortunes = ["{user} keep you.r shoes out of door", "hey {user} show your swag", "be carefull {user} is here! -_-", "{user} make the party awesome", "Hi {user} Take guitar & enjoy party", "hehe {user} are slide hide your dishes", "let's go {user} for chicken dinner"];
 const wimages = [
     'https://cdn.discordapp.com/attachments/639292893307207707/640027638584311828/battlefield_40-wallpaper-1600x600.jpg',
     'https://cdn.discordapp.com/attachments/639292893307207707/640027882017521674/bullets_4-wallpaper-1600x600.jpg',
@@ -943,7 +943,7 @@ bot.on("message", async(message) => {
             if (message.author.id !== botowner && !message.member.hasPermission("MANAGE_GUILD")) return message.channel.send(`U don't have permission to do that`);
             if (wchannelid === null) return message.channel.send(`welcome channel not set please set the channel first with \`\`${prefix}welcome set-channel <#channel>\`\``);
             let arg2 = arg.substring(c.length)
-            if (!arg2) return message.channel.send(`please add image url after command like \n\`\`${prefix}welcome set-customimage https://customwelcomeimage.jpg\`\``)
+            if (!arg2) return message.channel.send(`please add image url after command like \n\`\`${prefix}welcome set-customimage https://customwelcomeimage.jpg\`\` \nplease use only 1600px x 600px image`)
             let arg3 = arg2.slice
             if (arg3 === ".png" || arg3 === ".jpg") return message.channel.send(`its not a vaild url plz check your url is a image url only .png or .jpg vaild`);
             firebase.database().ref('servers/' + message.guild.id).update({
@@ -985,12 +985,12 @@ bot.on("message", async(message) => {
                             image2.print(font, 484, 248, s)
                             image2.print(font, 412, 336, u);
                             image2.print(font, 412, 248, "to");
-                            image2.print(font, 44, 474, fact2)
+                            image2.print(font, 44, 484, fact2)
                             image2.print(font, 412, 36, "Welcome");
                             Jimp.loadFont(Jimp.FONT_SANS_64_WHITE).then(font => {
                                 image2.print(font, 480, 244, s);
                                 image2.print(font, 408, 244, "to")
-                                image2.print(font, 40, 470, fact2)
+                                image2.print(font, 40, 480, fact2)
                                 image2.print(font, 408, 332, u);
                                 image2.print(font, 408, 32, "Welcome");
                                 Jimp.loadFont(Jimp.FONT_SANS_128_BLACK).then(font => {
@@ -1647,12 +1647,12 @@ bot.on('guildMemberAdd', async(member) => {
                                 image2.print(font, 484, 248, s);
                                 image2.print(font, 412, 336, u);
                                 image2.print(font, 412, 248, "to");
-                                image2.print(font, 44, 474, fact2)
+                                image2.print(font, 44, 484, fact2)
                                 image2.print(font, 412, 36, "Welcome");
                                 Jimp.loadFont(Jimp.FONT_SANS_64_WHITE).then(font => {
                                     image2.print(font, 480, 244, s);
                                     image2.print(font, 408, 244, "to")
-                                    image2.print(font, 40, 470, fact2)
+                                    image2.print(font, 40, 480, fact2)
                                     image2.print(font, 408, 332, u);
                                     image2.print(font, 408, 32, "Welcome");
                                     Jimp.loadFont(Jimp.FONT_SANS_128_BLACK).then(font => {
@@ -1660,6 +1660,7 @@ bot.on('guildMemberAdd', async(member) => {
                                         Jimp.loadFont(Jimp.FONT_SANS_128_WHITE).then(font => {
                                             image2.print(font, 408, 92, member.user.tag)
                                             image2.resize(1600, 480);
+                                            image2.quality(60);
                                             image.resize(360, 360);
                                             mask.resize(360, 360);
                                             image.mask(mask, 0, 0);
@@ -1684,12 +1685,12 @@ bot.on('guildMemberAdd', async(member) => {
                                 image2.print(font, 484, 248, s);
                                 image2.print(font, 412, 336, u);
                                 image2.print(font, 412, 248, "to");
-                                image2.print(font, 44, 474, fact2)
+                                image2.print(font, 44, 484, fact2)
                                 image2.print(font, 412, 36, "Welcome");
                                 Jimp.loadFont(Jimp.FONT_SANS_64_WHITE).then(font => {
                                     image2.print(font, 480, 244, s);
                                     image2.print(font, 408, 244, "to")
-                                    image2.print(font, 40, 470, fact2)
+                                    image2.print(font, 40, 480, fact2)
                                     image2.print(font, 408, 332, u);
                                     image2.print(font, 408, 32, "Welcome");
                                     Jimp.loadFont(Jimp.FONT_SANS_128_BLACK).then(font => {
@@ -1697,6 +1698,7 @@ bot.on('guildMemberAdd', async(member) => {
                                         Jimp.loadFont(Jimp.FONT_SANS_128_WHITE).then(font => {
                                             image2.print(font, 408, 92, member.user.tag)
                                             image2.resize(1600, 480);
+                                            image2.quality(60);
                                             image.resize(360, 360);
                                             mask.resize(360, 360);
                                             image.mask(mask, 0, 0);
