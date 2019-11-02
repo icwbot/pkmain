@@ -15,17 +15,18 @@ const botleavejoinchannel = "431829603741466634";
 const botrejectionschannel = "432090416834412545";
 const botowner = "264470521788366848";
 const wfortunes = ["{user} keep you`r shoes out of door", "hey {user} show your swag", "be carefull {user} is here! -_-", "{user} make the party awesome", "Hi {user} Take guitar & enjoy party", "hehe {user} are slide hide your dishes", "let's go {user} for chicken dinner"];
-const wimages = [`https://cdn.discordapp.com/attachments/639292893307207707/639297904573546503/Z2fpFVi.jpg`,
-                `https://cdn.discordapp.com/attachments/639292893307207707/639298061016760340/G29egX4.jpg`,
-                `https://cdn.discordapp.com/attachments/639292893307207707/639298136937988097/LHdn5I8.jpg`,
-                `https://cdn.discordapp.com/attachments/639292893307207707/639298183419265025/GziAP26.jpg`,
-                `https://cdn.discordapp.com/attachments/639292893307207707/639298248099627009/GjI5Vpk.png`,
-                `https://cdn.discordapp.com/attachments/639292893307207707/639298302944215072/WqTnmM0.jpg`,
-                `https://cdn.discordapp.com/attachments/639292893307207707/639298366349508618/qknRCM7.png`,
-                `https://cdn.discordapp.com/attachments/639292893307207707/640027638584311828/battlefield_40-wallpaper-1600x600.jpg`,
-                `https://cdn.discordapp.com/attachments/639292893307207707/640027882017521674/bullets_4-wallpaper-1600x600.jpg`,
-                `https://cdn.discordapp.com/attachments/639292893307207707/640029509126586371/gold_bullets-wallpaper-1600x600.jpg`,
-                `https://cdn.discordapp.com/attachments/639292893307207707/640029680833003529/toulouse_black_and_white-wallpaper-1600x600.jpg`];
+const wimages = [
+    /*`https://cdn.discordapp.com/attachments/639292893307207707/639297904573546503/Z2fpFVi.jpg`,
+    `https://cdn.discordapp.com/attachments/639292893307207707/639298061016760340/G29egX4.jpg`,
+    `https://cdn.discordapp.com/attachments/639292893307207707/639298136937988097/LHdn5I8.jpg`,
+    `https://cdn.discordapp.com/attachments/639292893307207707/639298183419265025/GziAP26.jpg`,
+    `https://cdn.discordapp.com/attachments/639292893307207707/639298248099627009/GjI5Vpk.png`,
+    `https://cdn.discordapp.com/attachments/639292893307207707/639298302944215072/WqTnmM0.jpg`,
+    `https://cdn.discordapp.com/attachments/639292893307207707/639298366349508618/qknRCM7.png`,*/
+    `https://cdn.discordapp.com/attachments/639292893307207707/640027638584311828/battlefield_40-wallpaper-1600x600.jpg`,
+    `https://cdn.discordapp.com/attachments/639292893307207707/640027882017521674/bullets_4-wallpaper-1600x600.jpg`,
+    `https://cdn.discordapp.com/attachments/639292893307207707/640029509126586371/gold_bullets-wallpaper-1600x600.jpg`,
+    `https://cdn.discordapp.com/attachments/639292893307207707/640029680833003529/toulouse_black_and_white-wallpaper-1600x600.jpg`];
 
 const icwstaff = ["385099687465844736", "278587244443467777", "288961251973791744"];
 const icwlogo = "https://media.discordapp.net/attachments/406099961730564107/407455733689483265/Untitled6.png?width=300&height=300";
@@ -1631,7 +1632,7 @@ bot.on('guildMemberAdd', async(member) => {
                                         image2.print(font, 104, 20, member.user.tag);
                                         Jimp.loadFont(Jimp.FONT_SANS_32_WHITE).then(font => {
                                             image2.print(font, 102, 18, member.user.tag)
-                                            image2.resize(1600, 480);
+                                            image2.resize(1600, 600);
                                             image.resize(360, 360);
                                             mask.resize(360, 360);
                                             image.mask(mask, 0, 0);
