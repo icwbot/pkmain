@@ -21,8 +21,12 @@ const wimages = [`https://cdn.discordapp.com/attachments/639292893307207707/6392
                 `https://cdn.discordapp.com/attachments/639292893307207707/639298183419265025/GziAP26.jpg`,
                 `https://cdn.discordapp.com/attachments/639292893307207707/639298248099627009/GjI5Vpk.png`,
                 `https://cdn.discordapp.com/attachments/639292893307207707/639298302944215072/WqTnmM0.jpg`,
-                `https://cdn.discordapp.com/attachments/639292893307207707/639298366349508618/qknRCM7.png
-                `];
+                `https://cdn.discordapp.com/attachments/639292893307207707/639298366349508618/qknRCM7.png`,
+                `https://cdn.discordapp.com/attachments/639292893307207707/640027638584311828/battlefield_40-wallpaper-1600x600.jpg`,
+                `https://cdn.discordapp.com/attachments/639292893307207707/640027882017521674/bullets_4-wallpaper-1600x600.jpg`,
+                `https://cdn.discordapp.com/attachments/639292893307207707/640029509126586371/gold_bullets-wallpaper-1600x600.jpg`,
+                `https://cdn.discordapp.com/attachments/639292893307207707/640029680833003529/toulouse_black_and_white-wallpaper-1600x600.jpg`];
+
 const icwstaff = ["385099687465844736", "278587244443467777", "288961251973791744"];
 const icwlogo = "https://media.discordapp.net/attachments/406099961730564107/407455733689483265/Untitled6.png?width=300&height=300";
 const icwflahimg = "https://cdn.discordapp.com/attachments/523532054499950602/607172616905555971/fx-long.gif";
