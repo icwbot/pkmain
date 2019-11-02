@@ -955,27 +955,27 @@ bot.on("message", async(message) => {
             Jimp.read(`https://cloud.githubusercontent.com/assets/414918/11165709/051d10b0-8b0f-11e5-864a-20ef0bada8d6.png`,(err, mask) => {
                 Jimp.read(img,(err, image) => {
                     Jimp.read(images,(err, image2) => {
-                        Jimp.loadFont(Jimp.FONT_SANS_16_BLACK).then(font => {
-                            image2.print(font, 121, 57, s);
-                            image2.print(font, 103, 79, u);
-                            image2.print(font, 103, 57, "to");
-                            image2.print(font, 11, 101, fact2)
-                            image2.print(font, 103, 4, "Welcome");
-                            Jimp.loadFont(Jimp.FONT_SANS_16_WHITE).then(font => {
-                                image2.print(font, 120, 56, s);
-                                image2.print(font, 102, 56, "to")
-                                image2.print(font, 10, 100, fact2)
-                                image2.print(font, 102, 78, u);
-                                image2.print(font, 102, 3, "Welcome");
-                                Jimp.loadFont(Jimp.FONT_SANS_32_BLACK).then(font => {
-                                    image2.print(font, 104, 20, member.user.tag);
-                                    Jimp.loadFont(Jimp.FONT_SANS_32_WHITE).then(font => {
-                                        image2.print(font, 102, 18, member.user.tag)
+                        Jimp.loadFont(Jimp.FONT_SANS_64_BLACK).then(font => {
+                            image2.print(font, 484, 248, s)
+                            image2.print(font, 412, 336, u);
+                            image2.print(font, 412, 248, "to");
+                            image2.print(font, 44, 474, fact2)
+                            image2.print(font, 412, 36, "Welcome");
+                            Jimp.loadFont(Jimp.FONT_SANS_64_WHITE).then(font => {
+                                image2.print(font, 480, 244, s);
+                                image2.print(font, 408, 244, "to")
+                                image2.print(font, 40, 470, fact2)
+                                image2.print(font, 408, 332, u);
+                                image2.print(font, 408, 32, "Welcome");
+                                Jimp.loadFont(Jimp.FONT_SANS_128_BLACK).then(font => {
+                                    image2.print(font, 416, 100, member.user.tag);
+                                    Jimp.loadFont(Jimp.FONT_SANS_128_WHITE).then(font => {
+                                        image2.print(font, 408, 92, member.user.tag)
                                         image2.resize(1600, 480);
                                         image.resize(360, 360);
                                         mask.resize(360, 360);
                                         image.mask(mask, 0, 0);
-                                        image2.composite(image, 5, 5)
+                                        image2.composite(image, 10, 10)
                                         .write(`welcome.jpg`)
                                             message.channel.send(new Discord.Attachment(`welcome.jpg`));
                                     });
@@ -1620,12 +1620,12 @@ bot.on('guildMemberAdd', async(member) => {
                                 image2.print(font, 484, 248, s);
                                 image2.print(font, 412, 336, u);
                                 image2.print(font, 412, 248, "to");
-                                image2.print(font, 44, 454, fact2)
+                                image2.print(font, 44, 474, fact2)
                                 image2.print(font, 412, 36, "Welcome");
                                 Jimp.loadFont(Jimp.FONT_SANS_64_WHITE).then(font => {
                                     image2.print(font, 480, 244, s);
                                     image2.print(font, 408, 244, "to")
-                                    image2.print(font, 40, 450, fact2)
+                                    image2.print(font, 40, 470, fact2)
                                     image2.print(font, 408, 332, u);
                                     image2.print(font, 408, 32, "Welcome");
                                     Jimp.loadFont(Jimp.FONT_SANS_128_BLACK).then(font => {
@@ -1653,27 +1653,27 @@ bot.on('guildMemberAdd', async(member) => {
                 Jimp.read(`https://cloud.githubusercontent.com/assets/414918/11165709/051d10b0-8b0f-11e5-864a-20ef0bada8d6.png`,(err, mask) => {
                     Jimp.read(img,(err, image) => {
                         Jimp.read(wcustomimageurl,(err, image2) => {
-                            Jimp.loadFont(Jimp.FONT_SANS_16_BLACK).then(font => {
-                                image2.print(font, 121, 57, s);
-                                image2.print(font, 103, 79, u);
-                                image2.print(font, 103, 57, "to");
-                                image2.print(font, 11, 101, fact2)
-                                image2.print(font, 103, 4, "Welcome");
-                                Jimp.loadFont(Jimp.FONT_SANS_16_WHITE).then(font => {
-                                    image2.print(font, 120, 56, s);
-                                    image2.print(font, 102, 56, "to")
-                                    image2.print(font, 10, 100, fact2)
-                                    image2.print(font, 102, 78, u);
-                                    image2.print(font, 102, 3, "Welcome");
-                                    Jimp.loadFont(Jimp.FONT_SANS_32_BLACK).then(font => {
-                                        image2.print(font, 104, 20, member.user.tag);
-                                        Jimp.loadFont(Jimp.FONT_SANS_32_WHITE).then(font => {
-                                            image2.print(font, 102, 18, member.user.tag)
+                            Jimp.loadFont(Jimp.FONT_SANS_64_BLACK).then(font => {
+                                image2.print(font, 484, 248, s);
+                                image2.print(font, 412, 336, u);
+                                image2.print(font, 412, 248, "to");
+                                image2.print(font, 44, 474, fact2)
+                                image2.print(font, 412, 36, "Welcome");
+                                Jimp.loadFont(Jimp.FONT_SANS_64_WHITE).then(font => {
+                                    image2.print(font, 480, 244, s);
+                                    image2.print(font, 408, 244, "to")
+                                    image2.print(font, 40, 470, fact2)
+                                    image2.print(font, 408, 332, u);
+                                    image2.print(font, 408, 32, "Welcome");
+                                    Jimp.loadFont(Jimp.FONT_SANS_128_BLACK).then(font => {
+                                        image2.print(font, 416, 100, member.user.tag);
+                                        Jimp.loadFont(Jimp.FONT_SANS_128_WHITE).then(font => {
+                                            image2.print(font, 408, 92, member.user.tag)
                                             image2.resize(1600, 480);
                                             image.resize(360, 360);
                                             mask.resize(360, 360);
                                             image.mask(mask, 0, 0);
-                                            image2.composite(image, 5, 5)
+                                            image2.composite(image, 10, 10)
                                             .write(`welcome.jpg`)
                                             member.guild.channels.get(wc.toString()).send(new Discord.Attachment(`welcome.jpg`));
                                         });
