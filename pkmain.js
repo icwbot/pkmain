@@ -1616,21 +1616,21 @@ bot.on('guildMemberAdd', async(member) => {
                 Jimp.read(`https://cloud.githubusercontent.com/assets/414918/11165709/051d10b0-8b0f-11e5-864a-20ef0bada8d6.png`,(err, mask) => {
                     Jimp.read(img,(err, image) => {
                         Jimp.read(images,(err, image2) => {
-                            Jimp.loadFont(Jimp.FONT_SANS_16_BLACK).then(font => {
+                            Jimp.loadFont(Jimp.FONT_SANS_64_BLACK).then(font => {
                                 image2.print(font, 484, 228, s);
                                 image2.print(font, 412, 316, u);
                                 image2.print(font, 412, 228, "to");
                                 image2.print(font, 44, 101, fact2)
                                 image2.print(font, 412, 16, "Welcome");
-                                Jimp.loadFont(Jimp.FONT_SANS_16_WHITE).then(font => {
+                                Jimp.loadFont(Jimp.FONT_SANS_64_WHITE).then(font => {
                                     image2.print(font, 480, 224, s);
                                     image2.print(font, 408, 224, "to")
                                     image2.print(font, 40, 400, fact2)
                                     image2.print(font, 408, 312, u);
                                     image2.print(font, 408, 12, "Welcome");
-                                    Jimp.loadFont(Jimp.FONT_SANS_32_BLACK).then(font => {
+                                    Jimp.loadFont(Jimp.FONT_SANS_128_BLACK).then(font => {
                                         image2.print(font, 416, 80, member.user.tag);
-                                        Jimp.loadFont(Jimp.FONT_SANS_32_WHITE).then(font => {
+                                        Jimp.loadFont(Jimp.FONT_SANS_128_WHITE).then(font => {
                                             image2.print(font, 408, 72, member.user.tag)
                                             image2.resize(1600, 480);
                                             image.resize(360, 360);
