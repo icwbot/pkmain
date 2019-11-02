@@ -1617,22 +1617,22 @@ bot.on('guildMemberAdd', async(member) => {
                     Jimp.read(img,(err, image) => {
                         Jimp.read(images,(err, image2) => {
                             Jimp.loadFont(Jimp.FONT_SANS_16_BLACK).then(font => {
-                                image2.print(font, 121, 57, s);
-                                image2.print(font, 103, 79, u);
-                                image2.print(font, 103, 57, "to");
-                                image2.print(font, 11, 101, fact2)
-                                image2.print(font, 103, 4, "Welcome");
+                                image2.print(font, 484, 228, s);
+                                image2.print(font, 412, 316, u);
+                                image2.print(font, 412, 228, "to");
+                                image2.print(font, 44, 101, fact2)
+                                image2.print(font, 412, 16, "Welcome");
                                 Jimp.loadFont(Jimp.FONT_SANS_16_WHITE).then(font => {
-                                    image2.print(font, 120, 56, s);
-                                    image2.print(font, 102, 56, "to")
-                                    image2.print(font, 10, 100, fact2)
-                                    image2.print(font, 102, 78, u);
-                                    image2.print(font, 102, 3, "Welcome");
+                                    image2.print(font, 480, 224, s);
+                                    image2.print(font, 408, 224, "to")
+                                    image2.print(font, 40, 400, fact2)
+                                    image2.print(font, 408, 312, u);
+                                    image2.print(font, 408, 12, "Welcome");
                                     Jimp.loadFont(Jimp.FONT_SANS_32_BLACK).then(font => {
-                                        image2.print(font, 104, 20, member.user.tag);
+                                        image2.print(font, 416, 80, member.user.tag);
                                         Jimp.loadFont(Jimp.FONT_SANS_32_WHITE).then(font => {
-                                            image2.print(font, 102, 18, member.user.tag)
-                                            image2.resize(1600, 600);
+                                            image2.print(font, 408, 72, member.user.tag)
+                                            image2.resize(1600, 480);
                                             image.resize(360, 360);
                                             mask.resize(360, 360);
                                             image.mask(mask, 0, 0);
