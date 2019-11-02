@@ -78,6 +78,16 @@ const querystring = require('querystring');
 const firebase = require("firebase");
 const Jimp = require("jimp");
 
+const DBL = require("dblapi.js");
+const dbl = new DBL(process.env.DBL_KEY, bot);
+dbl.on('posted', () => {
+  bot.channels.get(botlogchannel).send('Server count posted!');
+})
+ 
+dbl.on('error', e => {
+ bot.channels.get(boterrorchannel).send(`Oops! dbl error: ${e}`);
+})
+
 const ord = number => { let or; const num = number.toString(); if (num.endsWith("1")) { or = "st"; } else if (num.endsWith("2")) { or = "nd"; } else if (num.endsWith("3")) { or = "rd"; } else { or = "th"; } return or; };
 
 firebase.initializeApp({
