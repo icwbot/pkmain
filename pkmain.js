@@ -16,17 +16,43 @@ const botrejectionschannel = "432090416834412545";
 const botowner = "264470521788366848";
 const wfortunes = ["{user} keep you`r shoes out of door", "hey {user} show your swag", "be carefull {user} is here! -_-", "{user} make the party awesome", "Hi {user} Take guitar & enjoy party", "hehe {user} are slide hide your dishes", "let's go {user} for chicken dinner"];
 const wimages = [
-    /*`https://cdn.discordapp.com/attachments/639292893307207707/639297904573546503/Z2fpFVi.jpg`,
-    `https://cdn.discordapp.com/attachments/639292893307207707/639298061016760340/G29egX4.jpg`,
-    `https://cdn.discordapp.com/attachments/639292893307207707/639298136937988097/LHdn5I8.jpg`,
-    `https://cdn.discordapp.com/attachments/639292893307207707/639298183419265025/GziAP26.jpg`,
-    `https://cdn.discordapp.com/attachments/639292893307207707/639298248099627009/GjI5Vpk.png`,
-    `https://cdn.discordapp.com/attachments/639292893307207707/639298302944215072/WqTnmM0.jpg`,
-    `https://cdn.discordapp.com/attachments/639292893307207707/639298366349508618/qknRCM7.png`,*/
-    `https://cdn.discordapp.com/attachments/639292893307207707/640027638584311828/battlefield_40-wallpaper-1600x600.jpg`,
-    `https://cdn.discordapp.com/attachments/639292893307207707/640027882017521674/bullets_4-wallpaper-1600x600.jpg`,
-    `https://cdn.discordapp.com/attachments/639292893307207707/640029509126586371/gold_bullets-wallpaper-1600x600.jpg`,
-    `https://cdn.discordapp.com/attachments/639292893307207707/640029680833003529/toulouse_black_and_white-wallpaper-1600x600.jpg`];
+    'https://cdn.discordapp.com/attachments/639292893307207707/640027638584311828/battlefield_40-wallpaper-1600x600.jpg',
+    'https://cdn.discordapp.com/attachments/639292893307207707/640027882017521674/bullets_4-wallpaper-1600x600.jpg',
+    'https://cdn.discordapp.com/attachments/639292893307207707/640029509126586371/gold_bullets-wallpaper-1600x600.jpg',
+    'https://cdn.discordapp.com/attachments/639292893307207707/640059633322557440/modern_architecture-wallpaper-1600x600.jpg',
+    'https://cdn.discordapp.com/attachments/639292893307207707/640059750729515008/urban_architecture-wallpaper-1600x600.jpg',
+    'https://cdn.discordapp.com/attachments/639292893307207707/640059872137838612/modern_architecture_facade-wallpaper-1600x600.jpg',
+    'https://cdn.discordapp.com/attachments/639292893307207707/640059981202194449/inside_the_egg-wallpaper-1600x600.jpg',
+    'https://cdn.discordapp.com/attachments/639292893307207707/640060125830447114/mediapark_hilversum_netherlands-wallpaper-1600x600.jpg',
+    'https://cdn.discordapp.com/attachments/639292893307207707/640060224266567701/pace_of_change-wallpaper-1600x600.jpg',
+    'https://cdn.discordapp.com/attachments/639292893307207707/640060297775677441/beautiful_landscape_sunrise-wallpaper-1600x600.jpg',
+    'https://cdn.discordapp.com/attachments/639292893307207707/640060380940468234/sandy_beach_ocean_waves_aerial_view-wallpaper-1600x600.jpg',
+    'https://cdn.discordapp.com/attachments/639292893307207707/640060453510447124/poisonous_red_mushroom_macro-wallpaper-1600x600.jpg',
+    'https://cdn.discordapp.com/attachments/639292893307207707/640060544102957057/calm_ocean_aesthetic-wallpaper-1600x600.jpg',
+    'https://cdn.discordapp.com/attachments/639292893307207707/640060657861001256/mountain_waterfall_9-wallpaper-1600x600.jpg',
+    'https://cdn.discordapp.com/attachments/639292893307207707/640060752358801420/iceland_poppies_orange_flowers_field-wallpaper-1600x600.jpg',
+    'https://cdn.discordapp.com/attachments/639292893307207707/640060844536889344/pinkish_sunset-wallpaper-1600x600.jpg',
+    'https://cdn.discordapp.com/attachments/639292893307207707/640061057800601629/bavarian_alps_mountains_lake_berchtesgaden_germany-wallpaper-1600x600.jpg',
+    'https://cdn.discordapp.com/attachments/639292893307207707/640061171390611466/trees_20-wallpaper-1600x600.jpg',
+    'https://cdn.discordapp.com/attachments/639292893307207707/640061260263587860/straight_road-wallpaper-1600x600.jpg',
+    'https://cdn.discordapp.com/attachments/639292893307207707/640061343952797707/good_morning_10-wallpaper-1600x600.jpg',
+    'https://cdn.discordapp.com/attachments/639292893307207707/640061450815012874/tree_in_a_field_spring_background-wallpaper-1600x600.jpg',
+    'https://cdn.discordapp.com/attachments/639292893307207707/640061546923294720/green_garden_red_rose_summer-wallpaper-1600x600.jpg',
+    'https://cdn.discordapp.com/attachments/639292893307207707/640061635872030720/calm_ocean_dusk-wallpaper-1600x600.jpg',
+    'https://cdn.discordapp.com/attachments/639292893307207707/640061784048533504/forest_road_4-wallpaper-1600x600.jpg',
+    'https://cdn.discordapp.com/attachments/639292893307207707/640061888113278976/purple_river_reflection-wallpaper-1600x600.jpg',
+    'https://cdn.discordapp.com/attachments/639292893307207707/640061978521370634/wood_planks-wallpaper-1600x600.jpg',
+    'https://cdn.discordapp.com/attachments/639292893307207707/640062069416132628/sea_29-wallpaper-1600x600.jpg',
+    'https://cdn.discordapp.com/attachments/639292893307207707/640062162588532737/winter_christmas-wallpaper-1600x600.jpg',
+    'https://cdn.discordapp.com/attachments/639292893307207707/640062230762749952/2019_bmw_vision_m_next_sports_car_road-wallpaper-1600x600.jpg',
+    'https://cdn.discordapp.com/attachments/639292893307207707/640062321758044170/enchanted_forest_2-wallpaper-1600x600.jpg',
+    'https://cdn.discordapp.com/attachments/639292893307207707/640062448270835732/bohemian_wedding-wallpaper-1600x600.jpg',
+    'https://cdn.discordapp.com/attachments/639292893307207707/640062533809471488/halloween_pumpkins_jack_o_lanterns-wallpaper-1600x600.jpg',
+    'https://cdn.discordapp.com/attachments/639292893307207707/640062653930405889/tom_clancy_s_ghost_recon_breakpoint_game-wallpaper-1600x600.jpg',
+    'https://cdn.discordapp.com/attachments/639292893307207707/640062726613368832/whisky_ice_cigar-wallpaper-1600x600.jpg',
+    'https://cdn.discordapp.com/attachments/639292893307207707/640062806678306827/berries_in_basket_macro-wallpaper-1600x600.jpg',
+    'https://cdn.discordapp.com/attachments/639292893307207707/640062891378343946/glossy_blue_balls_background-wallpaper-1600x600.jpg'
+    ];
 
 const icwstaff = ["385099687465844736", "278587244443467777", "288961251973791744"];
 const icwlogo = "https://media.discordapp.net/attachments/406099961730564107/407455733689483265/Untitled6.png?width=300&height=300";
