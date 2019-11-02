@@ -1620,12 +1620,12 @@ bot.on('guildMemberAdd', async(member) => {
                                 image2.print(font, 484, 248, s);
                                 image2.print(font, 412, 336, u);
                                 image2.print(font, 412, 248, "to");
-                                image2.print(font, 44, 424, fact2)
+                                image2.print(font, 44, 454, fact2)
                                 image2.print(font, 412, 36, "Welcome");
                                 Jimp.loadFont(Jimp.FONT_SANS_64_WHITE).then(font => {
                                     image2.print(font, 480, 244, s);
                                     image2.print(font, 408, 244, "to")
-                                    image2.print(font, 40, 420, fact2)
+                                    image2.print(font, 40, 450, fact2)
                                     image2.print(font, 408, 332, u);
                                     image2.print(font, 408, 32, "Welcome");
                                     Jimp.loadFont(Jimp.FONT_SANS_128_BLACK).then(font => {
@@ -1636,7 +1636,7 @@ bot.on('guildMemberAdd', async(member) => {
                                             image.resize(360, 360);
                                             mask.resize(360, 360);
                                             image.mask(mask, 0, 0);
-                                            image2.composite(image, 5, 5)
+                                            image2.composite(image, 10, 10)
                                             .write(`welcome.jpg`)
                                             member.guild.channels.get(wc.toString()).send(new Discord.Attachment(`welcome.jpg`));
                                         });
