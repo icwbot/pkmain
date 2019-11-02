@@ -41,6 +41,7 @@
     "ytdl-core": "^1.0.0",
     "simple-youtube-api": "^5.0.2",
     "jimp": "^0.8.5",
-    "stt": "0.0.1"
+    "stt": "0.0.1",
+    "dblapi.js": "2.3.0"
   }
 }
