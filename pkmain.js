@@ -13,6 +13,7 @@ const botbuglogchannel = "418642505509240836";
 const boterrorchannel = "420955154695585792";
 const botleavejoinchannel = "431829603741466634";
 const botrejectionschannel = "432090416834412545";
+const botdblvotechannel = "640393617357144085";
 const botowner = "264470521788366848";
 const wfortunes = ["{user} keep you.r shoes out of door", "hey {user} show your swag", "be carefull {user} is here! -_-", "{user} make the party awesome", "Hi {user} Take guitar & enjoy party", "hehe {user} are slide hide your dishes", "let's go {user} for chicken dinner"];
 const wimages = [
@@ -79,7 +80,8 @@ const firebase = require("firebase");
 const Jimp = require("jimp");
 
 const DBL = require("dblapi.js");
-const dbl = new DBL(process.env.DBL_KEY, bot);
+const dbl = new DBL(process.env.DBL_KEY, {
+    webhookPort: 5000,webhookAuth: process.env.DBL_WEBHOOK_AUTH,}, bot);
 dbl.on('posted', () => {
   bot.channels.get(botlogchannel).send('Server count posted!');
 })
@@ -87,6 +89,20 @@ dbl.on('posted', () => {
 dbl.on('error', e => {
  bot.channels.get(boterrorchannel).send(`Oops! dbl error: ${e}`);
 })
+
+dbl.webhook.on('ready', hook => {
+    console.log(`Webhook running at http://${hook.hostname}:${hook.port}${hook.path}`);
+  });
+  dbl.webhook.on('vote', vote => {
+    if (vote.type == "test") {
+      console.log("Test successful!")
+    } else {
+      if (vote.type == "upvote") {
+        bot.channels.get(botdblvotechannel).send(`${vote.user} just upvoted <@${vote.bot}>!`)
+      }
+    }
+    // Do what you need to do 
+  });
 
 const ord = number => { let or; const num = number.toString(); if (num.endsWith("1")) { or = "st"; } else if (num.endsWith("2")) { or = "nd"; } else if (num.endsWith("3")) { or = "rd"; } else { or = "th"; } return or; };
 
