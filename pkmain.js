@@ -81,9 +81,9 @@ const Jimp = require("jimp");
 
 const DBL = require("dblapi.js");
 const dbl = new DBL(process.env.DBL_KEY, {
-    webhookPort: 5000,webhookAuth: process.env.DBL_WEBHOOK_AUTH,}, bot);
+    webhookPort: 5000,webhookAuth: process.env.DBL_WEBHOOK_AUTH}, bot);
 dbl.on('posted', () => {
-  bot.channels.get(botlogchannel).send('Server count posted!');
+  //bot.channels.get(botlogchannel).send('Server count posted!');
 })
  
 dbl.on('error', e => {
