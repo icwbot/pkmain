@@ -80,8 +80,7 @@ const firebase = require("firebase");
 const Jimp = require("jimp");
 
 const DBL = require("dblapi.js");
-const dbl = new DBL(process.env.DBL_KEY, {
-    webhookPort: 5000,webhookAuth: process.env.DBL_WEBHOOK_AUTH}, bot);
+const dbl = new DBL(process.env.DBL_KEY, bot);
 dbl.on('posted', () => {
   //bot.channels.get(botlogchannel).send('Server count posted!');
 })
@@ -90,19 +89,7 @@ dbl.on('error', e => {
  bot.channels.get(boterrorchannel).send(`Oops! dbl error: ${e}`);
 })
 
-dbl.webhook.on('ready', hook => {
-    console.log(`Webhook running at http://${hook.hostname}:${hook.port}${hook.path}`);
-  });
-  dbl.webhook.on('vote', vote => {
-    if (vote.type == "test") {
-      console.log("Test successful!")
-    } else {
-      if (vote.type == "upvote") {
-        bot.channels.get(botdblvotechannel).send(`${vote.user} just upvoted <@${vote.bot}>!`)
-      }
-    }
-    // Do what you need to do 
-  });
+
 
 const ord = number => { let or; const num = number.toString(); if (num.endsWith("1")) { or = "st"; } else if (num.endsWith("2")) { or = "nd"; } else if (num.endsWith("3")) { or = "rd"; } else { or = "th"; } return or; };
 
