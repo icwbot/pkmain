@@ -139,7 +139,8 @@ bot.on('message', async(message) => {
         /*message.channel.send(cbot.ask(message.content)).catch((e) => {
             message.channel.send("-> " + e);
         });
-        return;*/
+        return
+        }*/
         if (message.content.startsWith(`<@${bot.user.id}>`)) {
             args = message.content.substring((`<@${bot.user.id}>`).length + 1).split();
         } else {
@@ -156,8 +157,6 @@ bot.on('message', async(message) => {
                   message.channel.send(data.response)
                 message.channel.stopTyping();
               })
-        
-      }
     }
     args = message.content.substring(prefix.length + 1).split();
     comarg = message.content.slice(prefix.length).trim().split(/ +/g);
