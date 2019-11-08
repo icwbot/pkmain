@@ -89,7 +89,16 @@ dbl.on('error', e => {
  bot.channels.get(boterrorchannel).send(`Oops! dbl error: ${e}`);
 })
 
-
+const http = require('http');
+const express = require('express');
+const app = express();
+app.get("/", (request, response) => {
+  response.sendStatus(200);
+});
+app.listen(process.env.PORT);
+setInterval(() => {
+  http.get(`http://${process.env.PROJECT_DOMAIN}.glitch.me/`);
+}, 280000);
 
 const ord = number => { let or; const num = number.toString(); if (num.endsWith("1")) { or = "st"; } else if (num.endsWith("2")) { or = "nd"; } else if (num.endsWith("3")) { or = "rd"; } else { or = "th"; } return or; };
 
@@ -127,10 +136,28 @@ bot.on('message', async(message) => {
     if (message.author.bot) return undefined;
     if (message.channel.type == "dm" || message.channel.type == "group") return undefined;
     if (message.content.startsWith(`<@${bot.user.id}>`) || message.content.startsWith(`icw`) || message.content.startsWith(`Icw`) || message.content.startsWith(`ICW`)) {
-        message.channel.send(cbot.ask(message.content)).catch((e) => {
+        /*message.channel.send(cbot.ask(message.content)).catch((e) => {
             message.channel.send("-> " + e);
         });
-        return;
+        return;*/
+        if (message.content.startsWith(`<@${bot.user.id}>`)) {
+            args = message.content.substring((`<@${bot.user.id}>`).length + 1).split();
+        } else {
+          args = message.content.substring(4).split();
+        }
+        message.channel.startTyping();
+        var http = require('http');
+              request({
+                  url: 'https://some-random-api.ml/chatbot?message=' + args
+              }, (error, response, body) => {
+                  if (error) return;
+                  var data = JSON.parse(body);
+                  if (data.cod == "404") { message.channel.send(data.message); return undefined; }
+                  message.channel.send(data.response)
+                message.channel.stopTyping();
+              })
+        
+      }
     }
     args = message.content.substring(prefix.length + 1).split();
     comarg = message.content.slice(prefix.length).trim().split(/ +/g);
@@ -309,7 +336,6 @@ bot.on("message", async(message) => {
         }
 
         if (command === "say") {
-            message.delete().catch(err => bot.channels.get(botrejectionschannel).send(`${message.author.username} using say command in dm \n${err}`))
             message.channel.send(args.join("").substring(3));
         }
 
@@ -599,8 +625,12 @@ bot.on("message", async(message) => {
     }
 
     if (command === "say") {
-        message.delete().catch(err => bot.channels.get(botrejectionschannel).send(`${message.author.username} from ${message.guild.name} using say command \n${err}`))
-        message.channel.send(args.join("").substring(3));
+        if (!message.guild.member(bot.user).hasPermission("MANAGE_MESSAGES")) {
+            message.channel.send(args.join("").substring(3));
+        } else {
+            message.delete().catch(err => bot.channels.get(botrejectionschannel).send(`${message.author.username} from ${message.guild.name} using say command \n${err}`))
+            message.channel.send(args.join("").substring(3));
+        }
     }
 
     if (command === "bug-report" || command === "bug") {
@@ -1016,15 +1046,16 @@ bot.on("message", async(message) => {
                                         mask.resize(360, 360);
                                         image.mask(mask, 0, 0);
                                         image2.composite(image, 10, 10)
-                                        .write(`welcome.jpg`)
-                                            message.channel.send(new Discord.Attachment(`welcome.jpg`));
+                                        image2.getBuffer(Jimp.MIME_PNG, (err, buffer) => {
+                                          message.channel.send(``,new Discord.Attachment(buffer ,`welcome.png`))
+                                        })
                                     });
                                 });
                             });
                         });
                     });
                 })
-            });
+            });h
         } else {
             if (wchannelid === null) { wchannel = "Not Set" } else { wchannel = `<#${wchannelid}>` }
             let welcomeembed = new Discord.RichEmbed()
@@ -1678,8 +1709,9 @@ bot.on('guildMemberAdd', async(member) => {
                                             mask.resize(360, 360);
                                             image.mask(mask, 0, 0);
                                             image2.composite(image, 10, 10)
-                                            .write(`welcome.jpg`)
-                                            member.guild.channels.get(wc.toString()).send(new Discord.Attachment(`welcome.jpg`));
+                                            image2.getBuffer(Jimp.MIME_PNG, (err, buffer) => {
+                                                member.guild.channels.get(wc.toString()).send(``,new Discord.Attachment(buffer ,`welcome.png`))
+                                            })
                                         });
                                     });
                                 });
@@ -1716,8 +1748,9 @@ bot.on('guildMemberAdd', async(member) => {
                                             mask.resize(360, 360);
                                             image.mask(mask, 0, 0);
                                             image2.composite(image, 10, 10)
-                                            .write(`welcome.jpg`)
-                                            member.guild.channels.get(wc.toString()).send(new Discord.Attachment(`welcome.jpg`));
+                                            image2.getBuffer(Jimp.MIME_PNG, (err, buffer) => {
+                                                member.guild.channels.get(wc.toString()).send(``,new Discord.Attachment(buffer ,`welcome.png`))
+                                            })
                                         });
                                     });
                                 });
